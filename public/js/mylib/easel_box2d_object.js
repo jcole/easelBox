@@ -42,6 +42,11 @@ EaselBox2dObject = (function() {
     return this.easelObj.rotation = this.body.GetAngle() * (180 / Math.PI);
   };
 
+  EaselBox2dObject.prototype.setRenderPosition = function(xPixels, yPixels) {
+    this.easelObj.x = xPixels;
+    return this.easelObj.y = yPixels;
+  };
+
   return EaselBox2dObject;
 
 })();

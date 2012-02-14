@@ -40,3 +40,7 @@ class EaselBox2dObject
     @easelObj.y = @body.GetPosition().y * PIXELS_PER_METER
     @easelObj.rotation = @body.GetAngle() * (180 / Math.PI)
   
+  setRenderPosition: (xPixels, yPixels) ->
+    @easelObj.x = xPixels
+    @easelObj.y = yPixels
+    
