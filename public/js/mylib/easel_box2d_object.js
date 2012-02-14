@@ -24,7 +24,7 @@ EaselBox2dObject = (function() {
     bodyDef.position.y = yMeters;
     bodyDef.angle = Math.PI * angleDegrees / 180;
     bodyDef.angularVelocity = attributes.angularVelocity || 0;
-    bodyDef.linearVelocity = new Box2D.Common.Math.b2Vec2(attributes.initXVelocity, attributes.initYVelocity);
+    bodyDef.linearVelocity = new Box2D.Common.Math.b2Vec2(attributes.initXVelocity || 0, attributes.initYVelocity || 0);
     if ('dynamic' === static_dynamic_type) {
       bodyDef.type = Box2D.Dynamics.b2Body.b2_dynamicBody;
     } else if ('static' === static_dynamic_type) {
@@ -42,9 +42,11 @@ EaselBox2dObject = (function() {
     return this.easelObj.rotation = this.body.GetAngle() * (180 / Math.PI);
   };
 
-  EaselBox2dObject.prototype.setRenderPosition = function(xPixels, yPixels) {
-    this.easelObj.x = xPixels;
-    return this.easelObj.y = yPixels;
+  EaselBox2dObject.prototype.setPosition = function(xMeters, yMeters) {
+    this.easelObj.x = xMeters * PIXELS_PER_METER;
+    this.easelObj.y = yMeters * PIXELS_PER_METER;
+    this.body.GetPosition().x = xMeters;
+    return this.body.GetPosition().y = yMeters;
   };
 
   return EaselBox2dObject;

@@ -24,7 +24,7 @@ class EaselBox2dObject
     bodyDef.position.y = yMeters
     bodyDef.angle = Math.PI * angleDegrees / 180 
     bodyDef.angularVelocity = (attributes.angularVelocity or 0)
-    bodyDef.linearVelocity = new Box2D.Common.Math.b2Vec2(attributes.initXVelocity, attributes.initYVelocity)
+    bodyDef.linearVelocity = new Box2D.Common.Math.b2Vec2(attributes.initXVelocity or 0, attributes.initYVelocity or 0)
     if 'dynamic' == static_dynamic_type
       bodyDef.type = Box2D.Dynamics.b2Body.b2_dynamicBody
     else if 'static' == static_dynamic_type
@@ -40,7 +40,8 @@ class EaselBox2dObject
     @easelObj.y = @body.GetPosition().y * PIXELS_PER_METER
     @easelObj.rotation = @body.GetAngle() * (180 / Math.PI)
   
-  setRenderPosition: (xPixels, yPixels) ->
-    @easelObj.x = xPixels
-    @easelObj.y = yPixels
-    
+  setPosition: (xMeters, yMeters) ->
+    @easelObj.x = xMeters * PIXELS_PER_METER
+    @easelObj.y = yMeters * PIXELS_PER_METER
+    @body.GetPosition().x = xMeters
+    @body.GetPosition().y = yMeters

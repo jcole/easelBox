@@ -1,9 +1,11 @@
 var Game;
 
 Game = (function() {
-  var drawDot, forceMultiplier;
+  var drawDot, forceMultiplier, ticks;
 
   forceMultiplier = 10;
+
+  ticks = 0;
 
   function Game(box2dWorld, easelStage) {
     var blockHeight, blockWidth, catapult, ghost, ground, groundLevelMeters, i, initHeadXPixels, j, leftPyamid, levels, mountainScale, mountains, myBlock, sky, skyScale, topOfPyramid, treeScale, trees, x, y, _ref,
@@ -45,7 +47,6 @@ Game = (function() {
       initYMeters: groundLevelMeters - 140 / PIXELS_PER_METER,
       imgRadiusPixels: 20
     });
-    this.dynamicObjects.push(this.head);
     this.head.selected = false;
     this.head.easelObj.onPress = function(eventPress) {
       _this.head.selected = true;
@@ -66,14 +67,14 @@ Game = (function() {
     };
     blockWidth = 15;
     blockHeight = 60;
-    levels = 2;
-    topOfPyramid = groundLevelMeters - (1 + levels) * (blockHeight + blockWidth) / PIXELS_PER_METER + (blockHeight / 2 - 4) / PIXELS_PER_METER;
+    levels = 3;
+    topOfPyramid = groundLevelMeters - levels * (blockHeight + blockWidth) / PIXELS_PER_METER + 26 / PIXELS_PER_METER;
     leftPyamid = 300. / PIXELS_PER_METER;
-    for (i = 0; 0 <= levels ? i <= levels : i >= levels; 0 <= levels ? i++ : i--) {
+    for (i = 0; 0 <= levels ? i < levels : i > levels; 0 <= levels ? i++ : i--) {
       for (j = 0, _ref = i + 1; 0 <= _ref ? j <= _ref : j >= _ref; 0 <= _ref ? j++ : j--) {
         x = leftPyamid + (j - i / 2) * blockHeight / PIXELS_PER_METER;
         y = topOfPyramid + i * (blockHeight + blockWidth) / PIXELS_PER_METER;
-        myBlock = new EaselBox2dImage(this.box2dWorld, this.easelStage, 'dynamic', '/img/block1_15x60.png', {
+        myBlock = new EaselBox2dImage(this.box2dWorld, this.easelStage, 'static', '/img/block1_15x60.png', {
           imgWidthPixels: blockWidth,
           imgHeightPixels: blockHeight,
           initXMeters: x,
@@ -81,7 +82,7 @@ Game = (function() {
         });
         this.dynamicObjects.push(myBlock);
         if (j <= i) {
-          myBlock = new EaselBox2dImage(this.box2dWorld, this.easelStage, 'dynamic', '/img/block1_15x60.png', {
+          myBlock = new EaselBox2dImage(this.box2dWorld, this.easelStage, 'static', '/img/block1_15x60.png', {
             imgWidthPixels: blockWidth,
             imgHeightPixels: blockHeight,
             initXMeters: x + (blockHeight / 2) / PIXELS_PER_METER,
@@ -89,7 +90,7 @@ Game = (function() {
             angleDegrees: 90
           });
           this.dynamicObjects.push(myBlock);
-          ghost = new EaselBox2dImage(this.box2dWorld, this.easelStage, 'dynamic', '/img/ghost_30x36.png', {
+          ghost = new EaselBox2dImage(this.box2dWorld, this.easelStage, 'static', '/img/ghost_30x36.png', {
             imgWidthPixels: 30,
             imgHeightPixels: 36,
             initXMeters: x + (blockHeight / 2) / PIXELS_PER_METER,
@@ -103,13 +104,16 @@ Game = (function() {
 
   Game.prototype.update = function() {
     var object, _i, _len, _ref;
+    ticks += 1;
     _ref = this.dynamicObjects;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       object = _ref[_i];
       object.update();
+      if (ticks === 20) object.body.SetType(Box2D.Dynamics.b2Body.b2_dynamicBody);
     }
+    this.head.update();
     if (this.head.selected) {
-      return this.head.setRenderPosition(this.head.movedPositionXpixels, this.head.movedPositionYpixels);
+      return this.head.setPosition(this.head.movedPositionXpixels / PIXELS_PER_METER, this.head.movedPositionYpixels / PIXELS_PER_METER);
     }
   };
 

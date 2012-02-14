@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="css/main.css">
 </head>
 
-<body onload="new Main('easelCanvas', 'debugCanvas');">
+<body>
   <style>
     #game{
     	clear: left;
@@ -25,7 +25,7 @@
     	margin: 0 10px 0 10px;
     	display: inline;
     }
-    #footer {
+    #stats {
       clear: both;
     	margin: 0 0 0 10px;
     }
@@ -46,11 +46,17 @@
         <canvas id="debugCanvas"></canvas>
       </div>
     </div>
-    <footer id="footer"></footer>
+    <div id="stats"></div>
   </div>
 
+  <script src="/js/lib/jquery-1.7.1.min.js"></script>
   <script src="/js/lib/easel.js"></script>
   <script src="/js/lib/Box2dWeb-2.1.a.3.min.js"></script>
   <script src="/js/lib/stats.js"></script>
   <script src="/js/project.js"></script>
+  <script>
+    $(document).ready(function() {
+      new Main('easelCanvas', 'debugCanvas', 'stats');
+    });
+  </script>
 </body>

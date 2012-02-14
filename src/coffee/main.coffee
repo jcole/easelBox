@@ -12,7 +12,7 @@ class Main
   gravityX = 0
   gravityY = 10
   
-  constructor: (canvasID, debugCanvasID) ->
+  constructor: (canvasID, debugCanvasID, statsDivId) ->
     # set up main canvas
     @canvas = document.getElementById(canvasID)
     @canvas.height = WORLD_HEIGHT_PIXELS
@@ -32,7 +32,7 @@ class Main
 
     # set up stats
     @stats = new Stats()
-    document.getElementById('footer').appendChild @stats.domElement
+    document.getElementById(statsDivId).appendChild @stats.domElement
 
     # Set up Box2d debug drawing
     debugCanvas = document.getElementById(debugCanvasID)
@@ -51,10 +51,10 @@ class Main
   tick: () ->
     # setup Box2d physics
     @box2dWorld.Step (1 / Ticker.getMeasuredFPS()), 10, 10
-    
+  
     # update game logic based on new physical state
     @game.update()
-    
+        
     # update rendering
     @easelStage.update()
     @box2dWorld.DrawDebugData()

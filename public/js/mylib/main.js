@@ -19,7 +19,7 @@ Main = (function() {
 
   gravityY = 10;
 
-  function Main(canvasID, debugCanvasID) {
+  function Main(canvasID, debugCanvasID, statsDivId) {
     var debugCanvas, debugDraw;
     this.canvas = document.getElementById(canvasID);
     this.canvas.height = WORLD_HEIGHT_PIXELS;
@@ -29,7 +29,7 @@ Main = (function() {
     Ticker.addListener(this);
     Ticker.setFPS(framesPerSecond);
     this.stats = new Stats();
-    document.getElementById('footer').appendChild(this.stats.domElement);
+    document.getElementById(statsDivId).appendChild(this.stats.domElement);
     debugCanvas = document.getElementById(debugCanvasID);
     debugCanvas.height = WORLD_HEIGHT_PIXELS;
     debugCanvas.width = WORLD_WIDTH_PIXELS;

@@ -1,6 +1,7 @@
 class Game
   forceMultiplier = 10
-    
+  ticks = 0
+  
   constructor: (@box2dWorld, @easelStage) ->
     skyScale = 1.3
     sky = new Bitmap("/img/sky.jpg")
@@ -32,7 +33,7 @@ class Game
         imgWidthPixels: 1024,
         imgHeightPixels: 37,
       })   
-
+    
     initHeadXPixels = 100
     catapult = new Bitmap("/img/catapult_50x150.png")
     catapult.x = initHeadXPixels - 30
@@ -49,7 +50,6 @@ class Game
         initYMeters: groundLevelMeters - 140 / PIXELS_PER_METER, 
         imgRadiusPixels: 20
       }) 
-    @dynamicObjects.push(@head)
     
     @head.selected = false
     @head.easelObj.onPress = (eventPress) =>
@@ -71,15 +71,15 @@ class Game
         
     blockWidth = 15 
     blockHeight = 60 
-    levels = 2
-    topOfPyramid = groundLevelMeters - (1 + levels) *  (blockHeight + blockWidth) / PIXELS_PER_METER + (blockHeight / 2 - 4) / PIXELS_PER_METER
+    levels = 3
+    topOfPyramid = groundLevelMeters - levels *  (blockHeight + blockWidth) / PIXELS_PER_METER + 26 / PIXELS_PER_METER
     leftPyamid = (300) / PIXELS_PER_METER
-    for i in [0..levels]
+    for i in [0...levels]
       for j in [0..i+1]
           x =  leftPyamid + (j-i/2) * blockHeight / PIXELS_PER_METER
           y = topOfPyramid + i * (blockHeight + blockWidth) / PIXELS_PER_METER
           myBlock = new EaselBox2dImage(@box2dWorld, @easelStage, 
-            'dynamic', 
+            'static', 
             '/img/block1_15x60.png', 
             {
               imgWidthPixels: blockWidth, 
@@ -90,7 +90,7 @@ class Game
           @dynamicObjects.push(myBlock)
           if j <= i
             myBlock = new EaselBox2dImage(@box2dWorld, @easelStage, 
-              'dynamic', 
+              'static', 
               '/img/block1_15x60.png', 
               {
                 imgWidthPixels: blockWidth, 
@@ -102,7 +102,7 @@ class Game
             @dynamicObjects.push(myBlock)
 
             ghost = new EaselBox2dImage(@box2dWorld, @easelStage, 
-              'dynamic', 
+              'static', 
               '/img/ghost_30x36.png', 
               {
                 imgWidthPixels: 30, 
@@ -114,10 +114,15 @@ class Game
 
                              
   update: ->
+    ticks += 1
     for object in @dynamicObjects
-      object.update()  
+      object.update() 
+      if ticks == 20
+        object.body.SetType Box2D.Dynamics.b2Body.b2_dynamicBody
+        
+    @head.update() 
     if @head.selected
-      @head.setRenderPosition(@head.movedPositionXpixels, @head.movedPositionYpixels)
+      @head.setPosition(@head.movedPositionXpixels / PIXELS_PER_METER, @head.movedPositionYpixels / PIXELS_PER_METER)
       
   drawDot = (stage, x, y) ->
     # draw red dot for debugging positioning
