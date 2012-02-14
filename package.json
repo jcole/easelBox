@@ -1,0 +1,9 @@
+{
+  "name": "Easel-Box2d-Test", 
+  "version": "0.0.1", 
+  "private": true, 
+  "dependencies": {
+    "express" : "*",
+    "coffee-script" : "*"
+  }
+}

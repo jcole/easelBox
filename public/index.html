@@ -1,0 +1,56 @@
+<!doctype html>
+<head>
+  <meta charset="utf-8">
+  <title>Jeff Test Game</title>
+  <meta name="description" content="A test game!">
+  <meta name="author" content="Jeff Cole">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/main.css">
+</head>
+
+<body onload="new Main('easelCanvas', 'debugCanvas');">
+  <style>
+    #game{
+    	clear: left;
+    	float: left;
+    	width: 500px;
+    	padding: 20px 0;
+    	margin: 0 0 0 10px;
+    	display: inline;
+    }
+    #debug{
+    	float: left;
+    	width: 500px;
+    	padding: 20px 0;
+    	margin: 0 10px 0 10px;
+    	display: inline;
+    }
+    #footer {
+      clear: both;
+    	margin: 0 0 0 10px;
+    }
+    canvas {
+      background-color: #000;
+    }
+  </style>
+  <div id="container">
+    <header></header>
+    <div id="main" role="main">
+      <div id="game">
+        <p>Drawing on canvas with EaselJS</p>
+        <canvas id="easelCanvas"></canvas>
+        <p>(click and drag the head to sling it at the blocks)</p>
+      </div>
+      <div id="debug">
+        <p>The debug drawing directly from Box2dWeb</p>
+        <canvas id="debugCanvas"></canvas>
+      </div>
+    </div>
+    <footer id="footer"></footer>
+  </div>
+
+  <script src="/js/lib/easel.js"></script>
+  <script src="/js/lib/Box2dWeb-2.1.a.3.min.js"></script>
+  <script src="/js/lib/stats.js"></script>
+  <script src="/js/project.js"></script>
+</body>
