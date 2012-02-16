@@ -1,13 +1,13 @@
-var EaselBox2dImage, EaselBox2dObject, EaselBox2dWorld,
+var EaselBoxImage, EaselBoxObject, EaselBoxWorld,
   __hasProp = Object.prototype.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-EaselBox2dObject = (function() {
+EaselBoxObject = (function() {
   var body, getType;
 
   body = null;
 
-  function EaselBox2dObject(easelObj, box2dShape, staticDynamicType, pixelsPerMeter, options) {
+  function EaselBoxObject(easelObj, box2dShape, staticDynamicType, pixelsPerMeter, options) {
     var angleDegrees, xMeters, xPixels, yMeters, yPixels;
     this.easelObj = easelObj;
     this.pixelsPerMeter = pixelsPerMeter;
@@ -39,20 +39,20 @@ EaselBox2dObject = (function() {
     }
   }
 
-  EaselBox2dObject.prototype.update = function() {
+  EaselBoxObject.prototype.update = function() {
     this.easelObj.x = this.body.GetPosition().x * this.pixelsPerMeter;
     this.easelObj.y = this.body.GetPosition().y * this.pixelsPerMeter;
     return this.easelObj.rotation = this.body.GetAngle() * (180 / Math.PI);
   };
 
-  EaselBox2dObject.prototype.setPosition = function(xMeters, yMeters) {
+  EaselBoxObject.prototype.setPosition = function(xMeters, yMeters) {
     this.easelObj.x = xMeters * this.pixelsPerMeter;
     this.easelObj.y = yMeters * this.pixelsPerMeter;
     this.body.GetPosition().x = xMeters;
     return this.body.GetPosition().y = yMeters;
   };
 
-  EaselBox2dObject.prototype.setType = function(type) {
+  EaselBoxObject.prototype.setType = function(type) {
     return this.body.SetType(getType(type));
   };
 
@@ -66,15 +66,15 @@ EaselBox2dObject = (function() {
     }
   };
 
-  return EaselBox2dObject;
+  return EaselBoxObject;
 
 })();
 
-EaselBox2dImage = (function(_super) {
+EaselBoxImage = (function(_super) {
 
-  __extends(EaselBox2dImage, _super);
+  __extends(EaselBoxImage, _super);
 
-  function EaselBox2dImage(imgSrc, staticDynamicType, pixelsPerMeter, options) {
+  function EaselBoxImage(imgSrc, staticDynamicType, pixelsPerMeter, options) {
     var bMap, box2dShape, heightMeters, heightPixels, radiusMeters, widthMeters, widthPixels;
     bMap = new Bitmap(imgSrc);
     if (options.imgRadiusPixels) {
@@ -91,21 +91,21 @@ EaselBox2dImage = (function(_super) {
       heightMeters = (heightPixels / 2) / pixelsPerMeter;
       box2dShape = new Box2D.Collision.Shapes.b2PolygonShape.AsBox(widthMeters, heightMeters);
     }
-    EaselBox2dImage.__super__.constructor.call(this, bMap, box2dShape, staticDynamicType, pixelsPerMeter, options);
+    EaselBoxImage.__super__.constructor.call(this, bMap, box2dShape, staticDynamicType, pixelsPerMeter, options);
   }
 
-  return EaselBox2dImage;
+  return EaselBoxImage;
 
-})(EaselBox2dObject);
+})(EaselBoxObject);
 
-EaselBox2dWorld = (function() {
+EaselBoxWorld = (function() {
   var minFPS;
 
   minFPS = 10;
 
-  function EaselBox2dWorld(gameObj, frameRate, canvas, debugCanvas, gravityX, gravityY, pixelsPerMeter) {
+  function EaselBoxWorld(callingObj, frameRate, canvas, debugCanvas, gravityX, gravityY, pixelsPerMeter) {
     var debugDraw;
-    this.gameObj = gameObj;
+    this.callingObj = callingObj;
     this.pixelsPerMeter = pixelsPerMeter;
     Ticker.addListener(this);
     Ticker.setFPS(frameRate);
@@ -121,11 +121,11 @@ EaselBox2dWorld = (function() {
     this.box2dWorld.SetDebugDraw(debugDraw);
   }
 
-  EaselBox2dWorld.prototype.addEntity = function(type, staticType, options) {
+  EaselBoxWorld.prototype.addEntity = function(type, staticType, options) {
     var object;
     object = null;
     if (type === 'bitmap') {
-      object = new EaselBox2dImage(options.imgSrc, staticType, this.pixelsPerMeter, options);
+      object = new EaselBoxImage(options.imgSrc, staticType, this.pixelsPerMeter, options);
     }
     this.easelStage.addChild(object.easelObj);
     object.body = this.box2dWorld.CreateBody(object.bodyDef);
@@ -134,7 +134,7 @@ EaselBox2dWorld = (function() {
     return object;
   };
 
-  EaselBox2dWorld.prototype.addImage = function(imgSrc, options) {
+  EaselBoxWorld.prototype.addImage = function(imgSrc, options) {
     var obj, property, value;
     obj = new Bitmap(imgSrc);
     for (property in options) {
@@ -144,7 +144,7 @@ EaselBox2dWorld = (function() {
     return this.easelStage.addChild(obj);
   };
 
-  EaselBox2dWorld.prototype.tick = function() {
+  EaselBoxWorld.prototype.tick = function() {
     var object, _i, _len, _ref;
     if (Ticker.getMeasuredFPS() > minFPS) {
       this.box2dWorld.Step(1 / Ticker.getMeasuredFPS(), 10, 10);
@@ -155,15 +155,15 @@ EaselBox2dWorld = (function() {
         object.update();
       }
     }
-    if (typeof this.gameObj.step === 'function') this.gameObj.step();
+    if (typeof this.callingObj.tick === 'function') this.callingObj.tick();
     this.easelStage.update();
     return this.box2dWorld.DrawDebugData();
   };
 
-  EaselBox2dWorld.vector = function(x, y) {
+  EaselBoxWorld.prototype.vector = function(x, y) {
     return new Box2D.Common.Math.b2Vec2(x, y);
   };
 
-  return EaselBox2dWorld;
+  return EaselBoxWorld;
 
 })();

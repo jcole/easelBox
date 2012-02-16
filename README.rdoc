@@ -1,6 +1,8 @@
-= EaselJS-Box2dWeb
+= EaselBox
 
-A Javascript wrapper for the EaselJS canvas rendering library and the Box2dWeb physics engine
+EaselBox is a Javascript wrapper for the EaselJS canvas rendering library and the Box2dWeb physics engine.  It makes it easy to create objects that have Box2d's physics, as well as Easel's powerful rendering capabilities.
+
+EaselBox adds convenience methods to create those objects, as well as giving you direct access to the underlying EaselJS and Box2dWeb entities if you'd like to manipulate them directly.
 
 == Demo
 
@@ -17,6 +19,14 @@ http://jeff-cole-projects.herokuapp.com/easel_box2d
   npm install
   node app.js  
   open browser to http://localhost:3000
+
+
+== Usage
+
+In addition to your own JS files, you need to require the following:
+  easel.js
+  Box2dWeb-2.1.a.3.min.js (or later)
+  easel-box2d.js
 
 == To re-build source
 

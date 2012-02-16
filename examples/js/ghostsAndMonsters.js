@@ -1,6 +1,6 @@
-var Game;
+var GhostsAndMonstersGame;
 
-Game = (function() {
+GhostsAndMonstersGame = (function() {
   var forceMultiplier, frameRate, gravityX, gravityY, pixelsPerMeter;
 
   pixelsPerMeter = 30;
@@ -13,10 +13,10 @@ Game = (function() {
 
   forceMultiplier = 5;
 
-  function Game(canvas, debugCanvas, statsCanvas) {
+  function GhostsAndMonstersGame(canvas, debugCanvas, statsCanvas) {
     var blockHeight, blockWidth, ghost, ground, groundLevelMeters, i, initHeadXPixels, j, leftPyamid, levels, myBlock, topOfPyramid, worldHeightMeters, worldHeightPixels, worldWidthMeters, worldWidthPixels, x, y, _ref,
       _this = this;
-    this.world = new EaselBox2dWorld(this, frameRate, canvas, debugCanvas, gravityX, gravityY, pixelsPerMeter);
+    this.world = new EaselBoxWorld(this, frameRate, canvas, debugCanvas, gravityX, gravityY, pixelsPerMeter);
     this.stats = new Stats();
     statsCanvas.appendChild(this.stats.domElement);
     worldWidthPixels = canvas.width;
@@ -70,7 +70,7 @@ Game = (function() {
         _this.head.setType("dynamic");
         forceX = (_this.head.initPositionXpixels - event.stageX) * forceMultiplier;
         forceY = (_this.head.initPositionYpixels - event.stageY) * forceMultiplier;
-        return _this.head.body.ApplyImpulse(EaselBox2dWorld.vector(forceX, forceY), EaselBox2dWorld.vector(_this.head.body.GetPosition().x, _this.head.body.GetPosition().y));
+        return _this.head.body.ApplyImpulse(_this.world.vector(forceX, forceY), _this.world.vector(_this.head.body.GetPosition().x, _this.head.body.GetPosition().y));
       };
     };
     blockWidth = 15;
@@ -110,10 +110,10 @@ Game = (function() {
     }
   }
 
-  Game.prototype.step = function() {
+  GhostsAndMonstersGame.prototype.tick = function() {
     return this.stats.update();
   };
 
-  return Game;
+  return GhostsAndMonstersGame;
 
 })();

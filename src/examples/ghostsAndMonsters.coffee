@@ -1,4 +1,4 @@
-class Game
+class GhostsAndMonstersGame
   # to set up Easel-Box2d world
   pixelsPerMeter = 30
   gravityX = 0
@@ -8,7 +8,7 @@ class Game
   forceMultiplier = 5
   
   constructor: (canvas, debugCanvas, statsCanvas) ->    
-    @world = new EaselBox2dWorld(this, frameRate, canvas, debugCanvas, gravityX, gravityY, pixelsPerMeter)
+    @world = new EaselBoxWorld(this, frameRate, canvas, debugCanvas, gravityX, gravityY, pixelsPerMeter)
     
     # optional: set up frame rate display
     @stats = new Stats()
@@ -63,8 +63,8 @@ class Game
         forceX = (@head.initPositionXpixels - event.stageX) * forceMultiplier
         forceY = (@head.initPositionYpixels - event.stageY) * forceMultiplier
         @head.body.ApplyImpulse(
-          EaselBox2dWorld.vector(forceX, forceY),
-          EaselBox2dWorld.vector(@head.body.GetPosition().x, @head.body.GetPosition().y)
+          @world.vector(forceX, forceY),
+          @world.vector(@head.body.GetPosition().x, @head.body.GetPosition().y)
         )    
     
     # draw pyramid    
@@ -111,7 +111,7 @@ class Game
               })
 
   # optional: a callback for each EaselBox2dWorld tick()
-  step: () ->
+  tick: () ->
     @stats.update()
     
                   

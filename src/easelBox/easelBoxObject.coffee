@@ -1,4 +1,4 @@
-class EaselBox2dObject
+class EaselBoxObject
   body = null
   
   constructor: (@easelObj, box2dShape, staticDynamicType, @pixelsPerMeter, options) -> 

@@ -6,10 +6,10 @@ fs = require 'fs'
 individual_file_args = ['-c', '-b', '-o', 'examples/js', 'src/examples']
 
 # Listing files in order here -- order matters becauase of class inheiritance
-joined_file_args = ['-c', '-b', '-j', 'examples/js/easel-box2d.js', 
-  'src/easel-box2d/easel_box2d_object',
-  'src/easel-box2d/easel_box2d_image'
-  'src/easel-box2d/easel_box2d_world',
+joined_file_args = ['-c', '-b', '-j', 'examples/js/easelBox.js', 
+  'src/easelBox/easelBoxObject',
+  'src/easelBox/easelBoxImage'
+  'src/easelBox/easelBoxWorld',
 ]
 
 messages = (coffee) ->

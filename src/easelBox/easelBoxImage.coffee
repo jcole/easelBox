@@ -1,4 +1,4 @@
-class EaselBox2dImage extends EaselBox2dObject   
+class EaselBoxImage extends EaselBoxObject   
   
   constructor: (imgSrc, staticDynamicType, pixelsPerMeter, options) ->    
     # init the Easel shape

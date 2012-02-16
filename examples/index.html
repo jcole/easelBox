@@ -53,15 +53,15 @@
   <script src="/js/lib/stats.js"></script>
   <script src="/js/lib/easel.js"></script>
   <script src="/js/lib/Box2dWeb-2.1.a.3.min.js"></script>
-  <script src="/js/easel-box2d.js"></script>
-  <script src="/js/ghosts_and_monsters.js"></script>
+  <script src="/js/easelBox.js"></script>
+  <script src="/js/ghostsAndMonsters.js"></script>
   <script>
     $(document).ready(function() {
       canvas = document.getElementById('easelCanvas')
       debugCanvas = document.getElementById('debugCanvas')
       statsCanvas = document.getElementById('stats')
       
-      new Game(canvas, debugCanvas, statsCanvas);
+      new GhostsAndMonstersGame(canvas, debugCanvas, statsCanvas);
     });
   </script>
 </body>
