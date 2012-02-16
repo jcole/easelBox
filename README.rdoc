@@ -26,7 +26,7 @@ http://jeff-cole-projects.herokuapp.com/easel_box2d
 In addition to your own JS files, you need to require the following:
   easel.js
   Box2dWeb-2.1.a.3.min.js (or later)
-  easel-box2d.js
+  easelBox.js
 
 == To re-build source
 
