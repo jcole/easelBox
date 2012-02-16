@@ -1,50 +1,59 @@
 var Game;
 
 Game = (function() {
-  var drawDot, forceMultiplier, ticks;
+  var forceMultiplier, frameRate, gravityX, gravityY, pixelsPerMeter;
 
-  forceMultiplier = 10;
+  pixelsPerMeter = 30;
 
-  ticks = 0;
+  gravityX = 0;
 
-  function Game(box2dWorld, easelStage) {
-    var blockHeight, blockWidth, catapult, ghost, ground, groundLevelMeters, i, initHeadXPixels, j, leftPyamid, levels, mountainScale, mountains, myBlock, sky, skyScale, topOfPyramid, treeScale, trees, x, y, _ref,
+  gravityY = 10;
+
+  frameRate = 20;
+
+  forceMultiplier = 5;
+
+  function Game(canvas, debugCanvas, statsCanvas) {
+    var blockHeight, blockWidth, ghost, ground, groundLevelMeters, i, initHeadXPixels, j, leftPyamid, levels, myBlock, topOfPyramid, worldHeightMeters, worldHeightPixels, worldWidthMeters, worldWidthPixels, x, y, _ref,
       _this = this;
-    this.box2dWorld = box2dWorld;
-    this.easelStage = easelStage;
-    skyScale = 1.3;
-    sky = new Bitmap("/img/sky.jpg");
-    sky.scaleX = skyScale;
-    sky.scaleY = skyScale;
-    this.easelStage.addChild(sky);
-    treeScale = 0.5;
-    trees = new Bitmap("/img/trees.png");
-    trees.y = WORLD_HEIGHT_PIXELS - 400 * treeScale;
-    trees.scaleX = treeScale;
-    trees.scaleY = treeScale;
-    this.easelStage.addChild(trees);
-    mountainScale = 1;
-    mountains = new Bitmap("/img/mountains.png");
-    mountains.y = WORLD_HEIGHT_PIXELS - 254 * mountainScale;
-    mountains.scaleX = mountainScale;
-    mountains.scaleY = mountainScale;
-    this.easelStage.addChild(mountains);
-    groundLevelMeters = WORLD_HEIGHT_METERS - ((37 / 2) / PIXELS_PER_METER);
-    ground = new EaselBox2dImage(this.box2dWorld, this.easelStage, 'static', '/img/ground-cropped.png', {
-      initXMeters: (1024 / 2) / PIXELS_PER_METER,
+    this.world = new EaselBox2dWorld(this, frameRate, canvas, debugCanvas, gravityX, gravityY, pixelsPerMeter);
+    this.stats = new Stats();
+    statsCanvas.appendChild(this.stats.domElement);
+    worldWidthPixels = canvas.width;
+    worldHeightPixels = canvas.height;
+    worldWidthMeters = worldWidthPixels / pixelsPerMeter;
+    worldHeightMeters = worldHeightPixels / pixelsPerMeter;
+    initHeadXPixels = 100;
+    groundLevelMeters = worldHeightMeters - ((37 / 2) / pixelsPerMeter);
+    this.world.addImage("/img/sky.jpg", {
+      scaleX: 1.3,
+      scaleY: 1.3
+    });
+    this.world.addImage("/img/trees.png", {
+      scaleX: 0.5,
+      scaleY: 0.5,
+      y: worldHeightPixels - 400 * 0.55
+    });
+    this.world.addImage("/img/mountains.png", {
+      scaleX: 1,
+      scaleY: 1,
+      y: worldHeightPixels - 254 * 1
+    });
+    ground = this.world.addEntity('bitmap', 'static', {
+      imgSrc: '/img/ground-cropped.png',
+      initXMeters: (1024 / 2) / pixelsPerMeter,
       initYMeters: groundLevelMeters,
       imgWidthPixels: 1024,
       imgHeightPixels: 37
     });
-    initHeadXPixels = 100;
-    catapult = new Bitmap("/img/catapult_50x150.png");
-    catapult.x = initHeadXPixels - 30;
-    catapult.y = WORLD_HEIGHT_PIXELS - 160;
-    this.easelStage.addChild(catapult);
-    this.dynamicObjects = [];
-    this.head = new EaselBox2dImage(this.box2dWorld, this.easelStage, 'static', '/img/exorcist_40x50.png', {
-      initXMeters: initHeadXPixels / PIXELS_PER_METER,
-      initYMeters: groundLevelMeters - 140 / PIXELS_PER_METER,
+    this.world.addImage("/img/catapult_50x150.png", {
+      x: initHeadXPixels - 30,
+      y: worldHeightPixels - 160
+    });
+    this.head = this.world.addEntity('bitmap', 'static', {
+      imgSrc: '/img/exorcist_40x50.png',
+      initXMeters: initHeadXPixels / pixelsPerMeter,
+      initYMeters: groundLevelMeters - 140 / pixelsPerMeter,
       imgRadiusPixels: 20
     });
     this.head.selected = false;
@@ -59,69 +68,58 @@ Game = (function() {
       return eventPress.onMouseUp = function(event) {
         var forceX, forceY;
         _this.head.selected = false;
-        _this.head.body.SetType(Box2D.Dynamics.b2Body.b2_dynamicBody);
+        _this.head.setType("dynamic");
         forceX = (_this.head.initPositionXpixels - event.stageX) * forceMultiplier;
         forceY = (_this.head.initPositionYpixels - event.stageY) * forceMultiplier;
-        return _this.head.body.ApplyImpulse(new Box2D.Common.Math.b2Vec2(forceX, forceY), new Box2D.Common.Math.b2Vec2(_this.head.body.GetPosition().x, _this.head.body.GetPosition().y));
+        return _this.head.body.ApplyImpulse(EaselBox2dWorld.vector(forceX, forceY), EaselBox2dWorld.vector(_this.head.body.GetPosition().x, _this.head.body.GetPosition().y));
       };
     };
     blockWidth = 15;
     blockHeight = 60;
     levels = 3;
-    topOfPyramid = groundLevelMeters - levels * (blockHeight + blockWidth) / PIXELS_PER_METER + 26 / PIXELS_PER_METER;
-    leftPyamid = 300. / PIXELS_PER_METER;
+    topOfPyramid = groundLevelMeters - levels * (blockHeight + blockWidth) / pixelsPerMeter + 26 / pixelsPerMeter;
+    leftPyamid = 300. / pixelsPerMeter;
+    this.pyramidObjects = [];
     for (i = 0; 0 <= levels ? i < levels : i > levels; 0 <= levels ? i++ : i--) {
       for (j = 0, _ref = i + 1; 0 <= _ref ? j <= _ref : j >= _ref; 0 <= _ref ? j++ : j--) {
-        x = leftPyamid + (j - i / 2) * blockHeight / PIXELS_PER_METER;
-        y = topOfPyramid + i * (blockHeight + blockWidth) / PIXELS_PER_METER;
-        myBlock = new EaselBox2dImage(this.box2dWorld, this.easelStage, 'static', '/img/block1_15x60.png', {
+        x = leftPyamid + (j - i / 2) * blockHeight / pixelsPerMeter;
+        y = topOfPyramid + i * (blockHeight + blockWidth) / pixelsPerMeter;
+        myBlock = this.world.addEntity('bitmap', 'dynamic', {
+          imgSrc: '/img/block1_15x60.png',
           imgWidthPixels: blockWidth,
           imgHeightPixels: blockHeight,
           initXMeters: x,
           initYMeters: y
         });
-        this.dynamicObjects.push(myBlock);
+        this.pyramidObjects.push(myBlock);
         if (j <= i) {
-          myBlock = new EaselBox2dImage(this.box2dWorld, this.easelStage, 'static', '/img/block1_15x60.png', {
+          myBlock = this.world.addEntity('bitmap', 'dynamic', {
+            imgSrc: '/img/block1_15x60.png',
             imgWidthPixels: blockWidth,
             imgHeightPixels: blockHeight,
-            initXMeters: x + (blockHeight / 2) / PIXELS_PER_METER,
-            initYMeters: y - (blockHeight / 2 + blockWidth / 2) / PIXELS_PER_METER,
+            initXMeters: x + (blockHeight / 2) / pixelsPerMeter,
+            initYMeters: y - (blockHeight / 2 + blockWidth / 2) / pixelsPerMeter,
             angleDegrees: 90
           });
-          this.dynamicObjects.push(myBlock);
-          ghost = new EaselBox2dImage(this.box2dWorld, this.easelStage, 'static', '/img/ghost_30x36.png', {
+          this.pyramidObjects.push(myBlock);
+          ghost = this.world.addEntity('bitmap', 'dynamic', {
+            imgSrc: '/img/ghost_30x36.png',
             imgWidthPixels: 30,
             imgHeightPixels: 36,
-            initXMeters: x + (blockHeight / 2) / PIXELS_PER_METER,
-            initYMeters: y + 11 / PIXELS_PER_METER
+            initXMeters: x + (blockHeight / 2) / pixelsPerMeter,
+            initYMeters: y + 11 / pixelsPerMeter
           });
-          this.dynamicObjects.push(ghost);
+          this.pyramidObjects.push(ghost);
         }
       }
     }
   }
 
-  Game.prototype.update = function() {
-    var object, _i, _len, _ref;
-    ticks += 1;
-    _ref = this.dynamicObjects;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      object = _ref[_i];
-      object.update();
-      if (ticks === 20) object.body.SetType(Box2D.Dynamics.b2Body.b2_dynamicBody);
-    }
-    this.head.update();
+  Game.prototype.step = function() {
+    this.stats.update();
     if (this.head.selected) {
-      return this.head.setPosition(this.head.movedPositionXpixels / PIXELS_PER_METER, this.head.movedPositionYpixels / PIXELS_PER_METER);
+      return this.head.setPosition(this.head.movedPositionXpixels / pixelsPerMeter, this.head.movedPositionYpixels / pixelsPerMeter);
     }
-  };
-
-  drawDot = function(stage, x, y) {
-    var shape;
-    shape = new Shape();
-    shape.graphics.beginFill("#CC0000").drawCircle(x, y, 3);
-    return stage.addChild(shape);
   };
 
   return Game;

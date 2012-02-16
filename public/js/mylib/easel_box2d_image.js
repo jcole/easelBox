@@ -6,24 +6,24 @@ EaselBox2dImage = (function(_super) {
 
   __extends(EaselBox2dImage, _super);
 
-  function EaselBox2dImage(b2dWorld, easelStage, body_type, img_src, attributes) {
+  function EaselBox2dImage(imgSrc, staticDynamicType, pixelsPerMeter, options) {
     var bMap, box2dShape, heightMeters, heightPixels, radiusMeters, widthMeters, widthPixels;
-    bMap = new Bitmap(img_src);
-    if (attributes.imgRadiusPixels) {
-      radiusMeters = attributes.imgRadiusPixels / PIXELS_PER_METER;
+    bMap = new Bitmap(imgSrc);
+    if (options.imgRadiusPixels) {
+      radiusMeters = options.imgRadiusPixels / pixelsPerMeter;
       box2dShape = new Box2D.Collision.Shapes.b2CircleShape(radiusMeters);
-      bMap.regX = attributes.imgRadiusPixels;
-      bMap.regY = attributes.imgRadiusPixels;
+      bMap.regX = options.imgRadiusPixels;
+      bMap.regY = options.imgRadiusPixels;
     } else {
-      widthPixels = attributes.imgWidthPixels;
-      heightPixels = attributes.imgHeightPixels;
+      widthPixels = options.imgWidthPixels;
+      heightPixels = options.imgHeightPixels;
       bMap.regX = widthPixels / 2;
       bMap.regY = heightPixels / 2;
-      widthMeters = (widthPixels / 2) / PIXELS_PER_METER;
-      heightMeters = (heightPixels / 2) / PIXELS_PER_METER;
+      widthMeters = (widthPixels / 2) / pixelsPerMeter;
+      heightMeters = (heightPixels / 2) / pixelsPerMeter;
       box2dShape = new Box2D.Collision.Shapes.b2PolygonShape.AsBox(widthMeters, heightMeters);
     }
-    EaselBox2dImage.__super__.constructor.call(this, b2dWorld, easelStage, body_type, attributes, bMap, box2dShape);
+    EaselBox2dImage.__super__.constructor.call(this, bMap, box2dShape, staticDynamicType, pixelsPerMeter, options);
   }
 
   return EaselBox2dImage;

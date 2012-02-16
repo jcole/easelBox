@@ -1,110 +1,69 @@
-var EaselBox2dImage, EaselBox2dObject, Game, Main, PIXELS_PER_METER, WORLD_HEIGHT_METERS, WORLD_HEIGHT_PIXELS, WORLD_WIDTH_METERS, WORLD_WIDTH_PIXELS,
+var EaselBox2dImage, EaselBox2dObject, EaselBox2dWorld, Game,
   __hasProp = Object.prototype.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-PIXELS_PER_METER = 30;
-
-WORLD_WIDTH_PIXELS = 500;
-
-WORLD_HEIGHT_PIXELS = 400;
-
-WORLD_WIDTH_METERS = WORLD_WIDTH_PIXELS / PIXELS_PER_METER;
-
-WORLD_HEIGHT_METERS = WORLD_HEIGHT_PIXELS / PIXELS_PER_METER;
-
-Main = (function() {
-  var framesPerSecond, gravityX, gravityY;
-
-  framesPerSecond = 20;
-
-  gravityX = 0;
-
-  gravityY = 10;
-
-  function Main(canvasID, debugCanvasID, statsDivId) {
-    var debugCanvas, debugDraw;
-    this.canvas = document.getElementById(canvasID);
-    this.canvas.height = WORLD_HEIGHT_PIXELS;
-    this.canvas.width = WORLD_WIDTH_PIXELS;
-    this.box2dWorld = new Box2D.Dynamics.b2World(new Box2D.Common.Math.b2Vec2(gravityX, gravityY), true);
-    this.easelStage = new Stage(this.canvas);
-    Ticker.addListener(this);
-    Ticker.setFPS(framesPerSecond);
-    this.stats = new Stats();
-    document.getElementById(statsDivId).appendChild(this.stats.domElement);
-    debugCanvas = document.getElementById(debugCanvasID);
-    debugCanvas.height = WORLD_HEIGHT_PIXELS;
-    debugCanvas.width = WORLD_WIDTH_PIXELS;
-    debugDraw = new Box2D.Dynamics.b2DebugDraw();
-    debugDraw.SetSprite(debugCanvas.getContext("2d"));
-    debugDraw.SetDrawScale(PIXELS_PER_METER);
-    debugDraw.SetFillAlpha(0.3);
-    debugDraw.SetLineThickness(1.0);
-    debugDraw.SetFlags(Box2D.Dynamics.b2DebugDraw.e_shapeBit | Box2D.Dynamics.b2DebugDraw.e_jointBit);
-    this.box2dWorld.SetDebugDraw(debugDraw);
-    this.game = new Game(this.box2dWorld, this.easelStage);
-  }
-
-  Main.prototype.tick = function() {
-    this.box2dWorld.Step(1 / Ticker.getMeasuredFPS(), 10, 10);
-    this.game.update();
-    this.easelStage.update();
-    this.box2dWorld.DrawDebugData();
-    this.box2dWorld.ClearForces();
-    return this.stats.update();
-  };
-
-  return Main;
-
-})();
-
 EaselBox2dObject = (function() {
+  var body, getType;
 
-  function EaselBox2dObject(b2dWorld, easelStage, static_dynamic_type, attributes, easelObj, box2dShape) {
-    var angleDegrees, bodyDef, fixDef, xMeters, xPixels, yMeters, yPixels;
+  body = null;
+
+  function EaselBox2dObject(easelObj, box2dShape, staticDynamicType, pixelsPerMeter, options) {
+    var angleDegrees, xMeters, xPixels, yMeters, yPixels;
     this.easelObj = easelObj;
-    xMeters = attributes.initXMeters;
-    yMeters = attributes.initYMeters;
-    xPixels = xMeters * PIXELS_PER_METER;
-    yPixels = yMeters * PIXELS_PER_METER;
-    angleDegrees = attributes.angleDegrees || 0;
+    this.pixelsPerMeter = pixelsPerMeter;
+    xMeters = options.initXMeters;
+    yMeters = options.initYMeters;
+    xPixels = xMeters * this.pixelsPerMeter;
+    yPixels = yMeters * this.pixelsPerMeter;
+    angleDegrees = options.angleDegrees || 0;
     this.easelObj.x = xPixels;
     this.easelObj.y = yPixels;
     this.easelObj.rotation = angleDegrees;
-    easelStage.addChild(this.easelObj);
-    fixDef = new Box2D.Dynamics.b2FixtureDef;
-    fixDef.density = attributes.density || 1;
-    fixDef.friction = attributes.friction || 0.5;
-    fixDef.restitution = attributes.restitution || 0.2;
-    fixDef.shape = box2dShape;
-    bodyDef = new Box2D.Dynamics.b2BodyDef;
-    bodyDef.position.x = xMeters;
-    bodyDef.position.y = yMeters;
-    bodyDef.angle = Math.PI * angleDegrees / 180;
-    bodyDef.angularVelocity = attributes.angularVelocity || 0;
-    bodyDef.linearVelocity = new Box2D.Common.Math.b2Vec2(attributes.initXVelocity || 0, attributes.initYVelocity || 0);
-    if ('dynamic' === static_dynamic_type) {
-      bodyDef.type = Box2D.Dynamics.b2Body.b2_dynamicBody;
-    } else if ('static' === static_dynamic_type) {
-      bodyDef.type = Box2D.Dynamics.b2Body.b2_staticBody;
-    } else if ('kinematic' === static_dynamic_type) {
-      bodyDef.type = Box2D.Dynamics.b2Body.b2_kinematicBody;
+    this.fixDef = new Box2D.Dynamics.b2FixtureDef;
+    this.fixDef.density = options.density || 1;
+    this.fixDef.friction = options.friction || 0.5;
+    this.fixDef.restitution = options.restitution || 0.2;
+    this.fixDef.shape = box2dShape;
+    this.bodyDef = new Box2D.Dynamics.b2BodyDef;
+    this.bodyDef.position.x = xMeters;
+    this.bodyDef.position.y = yMeters;
+    this.bodyDef.angle = Math.PI * angleDegrees / 180;
+    this.bodyDef.angularVelocity = options.angularVelocity || 0;
+    this.bodyDef.linearVelocity = new Box2D.Common.Math.b2Vec2(options.initXVelocity || 0, options.initYVelocity || 0);
+    if ('dynamic' === staticDynamicType) {
+      this.bodyDef.type = Box2D.Dynamics.b2Body.b2_dynamicBody;
+    } else if ('static' === staticDynamicType) {
+      this.bodyDef.type = Box2D.Dynamics.b2Body.b2_staticBody;
+    } else if ('kinematic' === staticDynamicType) {
+      this.bodyDef.type = Box2D.Dynamics.b2Body.b2_kinematicBody;
     }
-    this.body = b2dWorld.CreateBody(bodyDef);
-    this.body.CreateFixture(fixDef);
   }
 
   EaselBox2dObject.prototype.update = function() {
-    this.easelObj.x = this.body.GetPosition().x * PIXELS_PER_METER;
-    this.easelObj.y = this.body.GetPosition().y * PIXELS_PER_METER;
+    this.easelObj.x = this.body.GetPosition().x * this.pixelsPerMeter;
+    this.easelObj.y = this.body.GetPosition().y * this.pixelsPerMeter;
     return this.easelObj.rotation = this.body.GetAngle() * (180 / Math.PI);
   };
 
   EaselBox2dObject.prototype.setPosition = function(xMeters, yMeters) {
-    this.easelObj.x = xMeters * PIXELS_PER_METER;
-    this.easelObj.y = yMeters * PIXELS_PER_METER;
+    this.easelObj.x = xMeters * this.pixelsPerMeter;
+    this.easelObj.y = yMeters * this.pixelsPerMeter;
     this.body.GetPosition().x = xMeters;
     return this.body.GetPosition().y = yMeters;
+  };
+
+  EaselBox2dObject.prototype.setType = function(type) {
+    return this.body.SetType(getType(type));
+  };
+
+  getType = function(type) {
+    if ('dynamic' === type) {
+      return Box2D.Dynamics.b2Body.b2_dynamicBody;
+    } else if ('static' === type) {
+      return Box2D.Dynamics.b2Body.b2_staticBody;
+    } else if ('kinematic' === type) {
+      return Box2D.Dynamics.b2Body.b2_kinematicBody;
+    }
   };
 
   return EaselBox2dObject;
@@ -115,75 +74,154 @@ EaselBox2dImage = (function(_super) {
 
   __extends(EaselBox2dImage, _super);
 
-  function EaselBox2dImage(b2dWorld, easelStage, body_type, img_src, attributes) {
+  function EaselBox2dImage(imgSrc, staticDynamicType, pixelsPerMeter, options) {
     var bMap, box2dShape, heightMeters, heightPixels, radiusMeters, widthMeters, widthPixels;
-    bMap = new Bitmap(img_src);
-    if (attributes.imgRadiusPixels) {
-      radiusMeters = attributes.imgRadiusPixels / PIXELS_PER_METER;
+    bMap = new Bitmap(imgSrc);
+    if (options.imgRadiusPixels) {
+      radiusMeters = options.imgRadiusPixels / pixelsPerMeter;
       box2dShape = new Box2D.Collision.Shapes.b2CircleShape(radiusMeters);
-      bMap.regX = attributes.imgRadiusPixels;
-      bMap.regY = attributes.imgRadiusPixels;
+      bMap.regX = options.imgRadiusPixels;
+      bMap.regY = options.imgRadiusPixels;
     } else {
-      widthPixels = attributes.imgWidthPixels;
-      heightPixels = attributes.imgHeightPixels;
+      widthPixels = options.imgWidthPixels;
+      heightPixels = options.imgHeightPixels;
       bMap.regX = widthPixels / 2;
       bMap.regY = heightPixels / 2;
-      widthMeters = (widthPixels / 2) / PIXELS_PER_METER;
-      heightMeters = (heightPixels / 2) / PIXELS_PER_METER;
+      widthMeters = (widthPixels / 2) / pixelsPerMeter;
+      heightMeters = (heightPixels / 2) / pixelsPerMeter;
       box2dShape = new Box2D.Collision.Shapes.b2PolygonShape.AsBox(widthMeters, heightMeters);
     }
-    EaselBox2dImage.__super__.constructor.call(this, b2dWorld, easelStage, body_type, attributes, bMap, box2dShape);
+    EaselBox2dImage.__super__.constructor.call(this, bMap, box2dShape, staticDynamicType, pixelsPerMeter, options);
   }
 
   return EaselBox2dImage;
 
 })(EaselBox2dObject);
 
+EaselBox2dWorld = (function() {
+  var minFPS;
+
+  minFPS = 10;
+
+  function EaselBox2dWorld(gameObj, frameRate, canvas, debugCanvas, gravityX, gravityY, pixelsPerMeter) {
+    var debugDraw;
+    this.gameObj = gameObj;
+    this.pixelsPerMeter = pixelsPerMeter;
+    Ticker.addListener(this);
+    Ticker.setFPS(frameRate);
+    this.box2dWorld = new Box2D.Dynamics.b2World(new Box2D.Common.Math.b2Vec2(gravityX, gravityY), true);
+    this.easelStage = new Stage(canvas);
+    this.objects = [];
+    debugDraw = new Box2D.Dynamics.b2DebugDraw();
+    debugDraw.SetSprite(debugCanvas.getContext("2d"));
+    debugDraw.SetDrawScale(this.pixelsPerMeter);
+    debugDraw.SetFillAlpha(0.3);
+    debugDraw.SetLineThickness(1.0);
+    debugDraw.SetFlags(Box2D.Dynamics.b2DebugDraw.e_shapeBit | Box2D.Dynamics.b2DebugDraw.e_jointBit);
+    this.box2dWorld.SetDebugDraw(debugDraw);
+  }
+
+  EaselBox2dWorld.prototype.addEntity = function(type, staticType, options) {
+    var object;
+    object = null;
+    if (type === 'bitmap') {
+      object = new EaselBox2dImage(options.imgSrc, staticType, this.pixelsPerMeter, options);
+    }
+    this.easelStage.addChild(object.easelObj);
+    object.body = this.box2dWorld.CreateBody(object.bodyDef);
+    object.body.CreateFixture(object.fixDef);
+    this.objects.push(object);
+    return object;
+  };
+
+  EaselBox2dWorld.prototype.addImage = function(imgSrc, options) {
+    var obj, property, value;
+    obj = new Bitmap(imgSrc);
+    for (property in options) {
+      value = options[property];
+      obj[property] = value;
+    }
+    return this.easelStage.addChild(obj);
+  };
+
+  EaselBox2dWorld.prototype.tick = function() {
+    var object, _i, _len, _ref;
+    if (Ticker.getMeasuredFPS() > minFPS) {
+      this.box2dWorld.Step(1 / Ticker.getMeasuredFPS(), 10, 10);
+      this.box2dWorld.ClearForces();
+      _ref = this.objects;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        object = _ref[_i];
+        object.update();
+      }
+    }
+    if (typeof this.gameObj.step === 'function') this.gameObj.step();
+    this.easelStage.update();
+    return this.box2dWorld.DrawDebugData();
+  };
+
+  EaselBox2dWorld.vector = function(x, y) {
+    return new Box2D.Common.Math.b2Vec2(x, y);
+  };
+
+  return EaselBox2dWorld;
+
+})();
+
 Game = (function() {
-  var drawDot, forceMultiplier, ticks;
+  var forceMultiplier, frameRate, gravityX, gravityY, pixelsPerMeter;
 
-  forceMultiplier = 10;
+  pixelsPerMeter = 30;
 
-  ticks = 0;
+  gravityX = 0;
 
-  function Game(box2dWorld, easelStage) {
-    var blockHeight, blockWidth, catapult, ghost, ground, groundLevelMeters, i, initHeadXPixels, j, leftPyamid, levels, mountainScale, mountains, myBlock, sky, skyScale, topOfPyramid, treeScale, trees, x, y, _ref,
+  gravityY = 10;
+
+  frameRate = 20;
+
+  forceMultiplier = 5;
+
+  function Game(canvas, debugCanvas, statsCanvas) {
+    var blockHeight, blockWidth, ghost, ground, groundLevelMeters, i, initHeadXPixels, j, leftPyamid, levels, myBlock, topOfPyramid, worldHeightMeters, worldHeightPixels, worldWidthMeters, worldWidthPixels, x, y, _ref,
       _this = this;
-    this.box2dWorld = box2dWorld;
-    this.easelStage = easelStage;
-    skyScale = 1.3;
-    sky = new Bitmap("/img/sky.jpg");
-    sky.scaleX = skyScale;
-    sky.scaleY = skyScale;
-    this.easelStage.addChild(sky);
-    treeScale = 0.5;
-    trees = new Bitmap("/img/trees.png");
-    trees.y = WORLD_HEIGHT_PIXELS - 400 * treeScale;
-    trees.scaleX = treeScale;
-    trees.scaleY = treeScale;
-    this.easelStage.addChild(trees);
-    mountainScale = 1;
-    mountains = new Bitmap("/img/mountains.png");
-    mountains.y = WORLD_HEIGHT_PIXELS - 254 * mountainScale;
-    mountains.scaleX = mountainScale;
-    mountains.scaleY = mountainScale;
-    this.easelStage.addChild(mountains);
-    groundLevelMeters = WORLD_HEIGHT_METERS - ((37 / 2) / PIXELS_PER_METER);
-    ground = new EaselBox2dImage(this.box2dWorld, this.easelStage, 'static', '/img/ground-cropped.png', {
-      initXMeters: (1024 / 2) / PIXELS_PER_METER,
+    this.world = new EaselBox2dWorld(this, frameRate, canvas, debugCanvas, gravityX, gravityY, pixelsPerMeter);
+    this.stats = new Stats();
+    statsCanvas.appendChild(this.stats.domElement);
+    worldWidthPixels = canvas.width;
+    worldHeightPixels = canvas.height;
+    worldWidthMeters = worldWidthPixels / pixelsPerMeter;
+    worldHeightMeters = worldHeightPixels / pixelsPerMeter;
+    initHeadXPixels = 100;
+    groundLevelMeters = worldHeightMeters - ((37 / 2) / pixelsPerMeter);
+    this.world.addImage("/img/sky.jpg", {
+      scaleX: 1.3,
+      scaleY: 1.3
+    });
+    this.world.addImage("/img/trees.png", {
+      scaleX: 0.5,
+      scaleY: 0.5,
+      y: worldHeightPixels - 400 * 0.55
+    });
+    this.world.addImage("/img/mountains.png", {
+      scaleX: 1,
+      scaleY: 1,
+      y: worldHeightPixels - 254 * 1
+    });
+    ground = this.world.addEntity('bitmap', 'static', {
+      imgSrc: '/img/ground-cropped.png',
+      initXMeters: (1024 / 2) / pixelsPerMeter,
       initYMeters: groundLevelMeters,
       imgWidthPixels: 1024,
       imgHeightPixels: 37
     });
-    initHeadXPixels = 100;
-    catapult = new Bitmap("/img/catapult_50x150.png");
-    catapult.x = initHeadXPixels - 30;
-    catapult.y = WORLD_HEIGHT_PIXELS - 160;
-    this.easelStage.addChild(catapult);
-    this.dynamicObjects = [];
-    this.head = new EaselBox2dImage(this.box2dWorld, this.easelStage, 'static', '/img/exorcist_40x50.png', {
-      initXMeters: initHeadXPixels / PIXELS_PER_METER,
-      initYMeters: groundLevelMeters - 140 / PIXELS_PER_METER,
+    this.world.addImage("/img/catapult_50x150.png", {
+      x: initHeadXPixels - 30,
+      y: worldHeightPixels - 160
+    });
+    this.head = this.world.addEntity('bitmap', 'static', {
+      imgSrc: '/img/exorcist_40x50.png',
+      initXMeters: initHeadXPixels / pixelsPerMeter,
+      initYMeters: groundLevelMeters - 140 / pixelsPerMeter,
       imgRadiusPixels: 20
     });
     this.head.selected = false;
@@ -198,69 +236,58 @@ Game = (function() {
       return eventPress.onMouseUp = function(event) {
         var forceX, forceY;
         _this.head.selected = false;
-        _this.head.body.SetType(Box2D.Dynamics.b2Body.b2_dynamicBody);
+        _this.head.setType("dynamic");
         forceX = (_this.head.initPositionXpixels - event.stageX) * forceMultiplier;
         forceY = (_this.head.initPositionYpixels - event.stageY) * forceMultiplier;
-        return _this.head.body.ApplyImpulse(new Box2D.Common.Math.b2Vec2(forceX, forceY), new Box2D.Common.Math.b2Vec2(_this.head.body.GetPosition().x, _this.head.body.GetPosition().y));
+        return _this.head.body.ApplyImpulse(EaselBox2dWorld.vector(forceX, forceY), EaselBox2dWorld.vector(_this.head.body.GetPosition().x, _this.head.body.GetPosition().y));
       };
     };
     blockWidth = 15;
     blockHeight = 60;
     levels = 3;
-    topOfPyramid = groundLevelMeters - levels * (blockHeight + blockWidth) / PIXELS_PER_METER + 26 / PIXELS_PER_METER;
-    leftPyamid = 300. / PIXELS_PER_METER;
+    topOfPyramid = groundLevelMeters - levels * (blockHeight + blockWidth) / pixelsPerMeter + 26 / pixelsPerMeter;
+    leftPyamid = 300. / pixelsPerMeter;
+    this.pyramidObjects = [];
     for (i = 0; 0 <= levels ? i < levels : i > levels; 0 <= levels ? i++ : i--) {
       for (j = 0, _ref = i + 1; 0 <= _ref ? j <= _ref : j >= _ref; 0 <= _ref ? j++ : j--) {
-        x = leftPyamid + (j - i / 2) * blockHeight / PIXELS_PER_METER;
-        y = topOfPyramid + i * (blockHeight + blockWidth) / PIXELS_PER_METER;
-        myBlock = new EaselBox2dImage(this.box2dWorld, this.easelStage, 'static', '/img/block1_15x60.png', {
+        x = leftPyamid + (j - i / 2) * blockHeight / pixelsPerMeter;
+        y = topOfPyramid + i * (blockHeight + blockWidth) / pixelsPerMeter;
+        myBlock = this.world.addEntity('bitmap', 'dynamic', {
+          imgSrc: '/img/block1_15x60.png',
           imgWidthPixels: blockWidth,
           imgHeightPixels: blockHeight,
           initXMeters: x,
           initYMeters: y
         });
-        this.dynamicObjects.push(myBlock);
+        this.pyramidObjects.push(myBlock);
         if (j <= i) {
-          myBlock = new EaselBox2dImage(this.box2dWorld, this.easelStage, 'static', '/img/block1_15x60.png', {
+          myBlock = this.world.addEntity('bitmap', 'dynamic', {
+            imgSrc: '/img/block1_15x60.png',
             imgWidthPixels: blockWidth,
             imgHeightPixels: blockHeight,
-            initXMeters: x + (blockHeight / 2) / PIXELS_PER_METER,
-            initYMeters: y - (blockHeight / 2 + blockWidth / 2) / PIXELS_PER_METER,
+            initXMeters: x + (blockHeight / 2) / pixelsPerMeter,
+            initYMeters: y - (blockHeight / 2 + blockWidth / 2) / pixelsPerMeter,
             angleDegrees: 90
           });
-          this.dynamicObjects.push(myBlock);
-          ghost = new EaselBox2dImage(this.box2dWorld, this.easelStage, 'static', '/img/ghost_30x36.png', {
+          this.pyramidObjects.push(myBlock);
+          ghost = this.world.addEntity('bitmap', 'dynamic', {
+            imgSrc: '/img/ghost_30x36.png',
             imgWidthPixels: 30,
             imgHeightPixels: 36,
-            initXMeters: x + (blockHeight / 2) / PIXELS_PER_METER,
-            initYMeters: y + 11 / PIXELS_PER_METER
+            initXMeters: x + (blockHeight / 2) / pixelsPerMeter,
+            initYMeters: y + 11 / pixelsPerMeter
           });
-          this.dynamicObjects.push(ghost);
+          this.pyramidObjects.push(ghost);
         }
       }
     }
   }
 
-  Game.prototype.update = function() {
-    var object, _i, _len, _ref;
-    ticks += 1;
-    _ref = this.dynamicObjects;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      object = _ref[_i];
-      object.update();
-      if (ticks === 20) object.body.SetType(Box2D.Dynamics.b2Body.b2_dynamicBody);
-    }
-    this.head.update();
+  Game.prototype.step = function() {
+    this.stats.update();
     if (this.head.selected) {
-      return this.head.setPosition(this.head.movedPositionXpixels / PIXELS_PER_METER, this.head.movedPositionYpixels / PIXELS_PER_METER);
+      return this.head.setPosition(this.head.movedPositionXpixels / pixelsPerMeter, this.head.movedPositionYpixels / pixelsPerMeter);
     }
-  };
-
-  drawDot = function(stage, x, y) {
-    var shape;
-    shape = new Shape();
-    shape.graphics.beginFill("#CC0000").drawCircle(x, y, 3);
-    return stage.addChild(shape);
   };
 
   return Game;

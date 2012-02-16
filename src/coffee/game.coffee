@@ -1,132 +1,125 @@
 class Game
-  forceMultiplier = 10
-  ticks = 0
+  # to set up Easel-Box2d world
+  pixelsPerMeter = 30
+  gravityX = 0
+  gravityY = 10
+  # game-specific
+  frameRate = 20
+  forceMultiplier = 5
   
-  constructor: (@box2dWorld, @easelStage) ->
-    skyScale = 1.3
-    sky = new Bitmap("/img/sky.jpg")
-    sky.scaleX = skyScale
-    sky.scaleY = skyScale
-    @easelStage.addChild sky    
+  constructor: (canvas, debugCanvas, statsCanvas) ->    
+    @world = new EaselBox2dWorld(this, frameRate, canvas, debugCanvas, gravityX, gravityY, pixelsPerMeter)
+    
+    # optional: set up frame rate display
+    @stats = new Stats()
+    statsCanvas.appendChild @stats.domElement
 
-    treeScale = 0.5
-    trees = new Bitmap("/img/trees.png")
-    trees.y = WORLD_HEIGHT_PIXELS - 400 * treeScale
-    trees.scaleX = treeScale
-    trees.scaleY = treeScale
-    @easelStage.addChild trees
-
-    mountainScale = 1
-    mountains = new Bitmap("/img/mountains.png")
-    mountains.y = WORLD_HEIGHT_PIXELS - 254 * mountainScale
-    mountains.scaleX = mountainScale
-    mountains.scaleY = mountainScale
-    @easelStage.addChild mountains  	
-
-    groundLevelMeters = WORLD_HEIGHT_METERS - ((37/2) / PIXELS_PER_METER)
-    ground = new EaselBox2dImage(@box2dWorld, @easelStage, 
+    worldWidthPixels = canvas.width
+    worldHeightPixels = canvas.height
+    worldWidthMeters = worldWidthPixels / pixelsPerMeter
+    worldHeightMeters = worldHeightPixels / pixelsPerMeter
+    initHeadXPixels = 100
+    groundLevelMeters = worldHeightMeters - ((37/2) / pixelsPerMeter)
+    
+    @world.addImage("/img/sky.jpg", {scaleX: 1.3, scaleY: 1.3})    
+    @world.addImage("/img/trees.png", {scaleX: 0.5, scaleY: 0.5, y: worldHeightPixels - 400 * 0.55})
+    @world.addImage("/img/mountains.png", {scaleX: 1, scaleY: 1, y: worldHeightPixels - 254 * 1})
+        
+    ground = @world.addEntity(
+      'bitmap',
       'static',
-      '/img/ground-cropped.png',
       {
-        initXMeters: (1024 / 2) / PIXELS_PER_METER, 
+        imgSrc: '/img/ground-cropped.png',
+        initXMeters: (1024 / 2) / pixelsPerMeter, 
         initYMeters: groundLevelMeters,
         imgWidthPixels: 1024,
         imgHeightPixels: 37,
       })   
-    
-    initHeadXPixels = 100
-    catapult = new Bitmap("/img/catapult_50x150.png")
-    catapult.x = initHeadXPixels - 30
-    catapult.y = WORLD_HEIGHT_PIXELS - 160
-    @easelStage.addChild catapult
-  
-    @dynamicObjects = [] 
       
-    @head = new EaselBox2dImage(@box2dWorld, @easelStage, 
+    @world.addImage("/img/catapult_50x150.png", {x: initHeadXPixels - 30, y:  worldHeightPixels - 160})
+
+    # setup head
+    @head = @world.addEntity(
+      'bitmap',
       'static',
-      '/img/exorcist_40x50.png',
       {
-        initXMeters: initHeadXPixels / PIXELS_PER_METER, 
-        initYMeters: groundLevelMeters - 140 / PIXELS_PER_METER, 
+        imgSrc: '/img/exorcist_40x50.png',
+        initXMeters: initHeadXPixels / pixelsPerMeter, 
+        initYMeters: groundLevelMeters - 140 / pixelsPerMeter, 
         imgRadiusPixels: 20
       }) 
-    
     @head.selected = false
     @head.easelObj.onPress = (eventPress) =>
       @head.selected = true
       @head.initPositionXpixels = eventPress.stageX
       @head.initPositionYpixels = eventPress.stageY
+      
       eventPress.onMouseMove = (event) =>
         @head.movedPositionXpixels = event.stageX
         @head.movedPositionYpixels = event.stageY
+
       eventPress.onMouseUp = (event) =>
         @head.selected = false
-        @head.body.SetType Box2D.Dynamics.b2Body.b2_dynamicBody
+        @head.setType "dynamic"  
         forceX = (@head.initPositionXpixels - event.stageX) * forceMultiplier
         forceY = (@head.initPositionYpixels - event.stageY) * forceMultiplier
         @head.body.ApplyImpulse(
-          new Box2D.Common.Math.b2Vec2(forceX, forceY),
-          new Box2D.Common.Math.b2Vec2(@head.body.GetPosition().x, @head.body.GetPosition().y)
+          EaselBox2dWorld.vector(forceX, forceY),
+          EaselBox2dWorld.vector(@head.body.GetPosition().x, @head.body.GetPosition().y)
         )    
-        
+    
+    # draw pyramid    
     blockWidth = 15 
     blockHeight = 60 
     levels = 3
-    topOfPyramid = groundLevelMeters - levels *  (blockHeight + blockWidth) / PIXELS_PER_METER + 26 / PIXELS_PER_METER
-    leftPyamid = (300) / PIXELS_PER_METER
+    topOfPyramid = groundLevelMeters - levels *  (blockHeight + blockWidth) / pixelsPerMeter + 26 / pixelsPerMeter
+    leftPyamid = (300) / pixelsPerMeter
+    @pyramidObjects = []     
     for i in [0...levels]
       for j in [0..i+1]
-          x =  leftPyamid + (j-i/2) * blockHeight / PIXELS_PER_METER
-          y = topOfPyramid + i * (blockHeight + blockWidth) / PIXELS_PER_METER
-          myBlock = new EaselBox2dImage(@box2dWorld, @easelStage, 
-            'static', 
-            '/img/block1_15x60.png', 
+          x =  leftPyamid + (j-i/2) * blockHeight / pixelsPerMeter
+          y = topOfPyramid + i * (blockHeight + blockWidth) / pixelsPerMeter
+          myBlock =  @world.addEntity(
+            'bitmap',
+            'dynamic', 
             {
+              imgSrc: '/img/block1_15x60.png', 
               imgWidthPixels: blockWidth, 
               imgHeightPixels: blockHeight,
               initXMeters: x, 
               initYMeters: y 
             })        
-          @dynamicObjects.push(myBlock)
+          @pyramidObjects.push(myBlock)
           if j <= i
-            myBlock = new EaselBox2dImage(@box2dWorld, @easelStage, 
-              'static', 
-              '/img/block1_15x60.png', 
+            myBlock = @world.addEntity(
+              'bitmap',
+              'dynamic', 
               {
+                imgSrc: '/img/block1_15x60.png', 
                 imgWidthPixels: blockWidth, 
                 imgHeightPixels: blockHeight, 
-                initXMeters: x + (blockHeight/2) / PIXELS_PER_METER,
-                initYMeters: y - (blockHeight/2 + blockWidth/2) / PIXELS_PER_METER,
+                initXMeters: x + (blockHeight/2) / pixelsPerMeter,
+                initYMeters: y - (blockHeight/2 + blockWidth/2) / pixelsPerMeter,
                 angleDegrees: 90
               })
-            @dynamicObjects.push(myBlock)
-
-            ghost = new EaselBox2dImage(@box2dWorld, @easelStage, 
-              'static', 
-              '/img/ghost_30x36.png', 
+            @pyramidObjects.push(myBlock)
+    
+            ghost = @world.addEntity(
+              'bitmap',
+              'dynamic', 
               {
+                imgSrc: '/img/ghost_30x36.png', 
                 imgWidthPixels: 30, 
                 imgHeightPixels: 36, 
-                initXMeters: x + (blockHeight/2) / PIXELS_PER_METER,
-                initYMeters: y + 11 / PIXELS_PER_METER
+                initXMeters: x + (blockHeight/2) / pixelsPerMeter,
+                initYMeters: y + 11 / pixelsPerMeter
               })
-            @dynamicObjects.push(ghost)
+            @pyramidObjects.push(ghost)
 
-                             
-  update: ->
-    ticks += 1
-    for object in @dynamicObjects
-      object.update() 
-      if ticks == 20
-        object.body.SetType Box2D.Dynamics.b2Body.b2_dynamicBody
-        
-    @head.update() 
+  # optional: a "step" method for EaselBox2dWorld callback on each tick()
+  step: () ->
+    @stats.update()
+    
     if @head.selected
-      @head.setPosition(@head.movedPositionXpixels / PIXELS_PER_METER, @head.movedPositionYpixels / PIXELS_PER_METER)
-      
-  drawDot = (stage, x, y) ->
-    # draw red dot for debugging positioning
-    shape = new Shape()
-    shape.graphics.beginFill("#CC0000").drawCircle(x, y, 3)
-    stage.addChild shape
-  
+      @head.setPosition(@head.movedPositionXpixels / pixelsPerMeter, @head.movedPositionYpixels / pixelsPerMeter)
+                  

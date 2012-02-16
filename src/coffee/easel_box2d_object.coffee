@@ -1,47 +1,58 @@
 class EaselBox2dObject
-  constructor: (b2dWorld, easelStage, static_dynamic_type, attributes, @easelObj, box2dShape) -> 
-    xMeters = attributes.initXMeters
-    yMeters = attributes.initYMeters
-    xPixels = xMeters * PIXELS_PER_METER
-    yPixels = yMeters * PIXELS_PER_METER
-    angleDegrees = attributes.angleDegrees or 0
+  body = null
+  
+  constructor: (@easelObj, box2dShape, staticDynamicType, @pixelsPerMeter, options) -> 
+    xMeters = options.initXMeters
+    yMeters = options.initYMeters
+    xPixels = xMeters * @pixelsPerMeter
+    yPixels = yMeters * @pixelsPerMeter
+    angleDegrees = options.angleDegrees or 0
 
     # for Easel
     @easelObj.x = xPixels
     @easelObj.y = yPixels
     @easelObj.rotation = angleDegrees
-    easelStage.addChild @easelObj
     
     # for Box2d
-    fixDef = new Box2D.Dynamics.b2FixtureDef
-    fixDef.density = (attributes.density or 1)
-    fixDef.friction = (attributes.friction or 0.5)
-    fixDef.restitution = (attributes.restitution or 0.2)
-    fixDef.shape = box2dShape
+    @fixDef = new Box2D.Dynamics.b2FixtureDef
+    @fixDef.density = (options.density or 1)
+    @fixDef.friction = (options.friction or 0.5)
+    @fixDef.restitution = (options.restitution or 0.2)
+    @fixDef.shape = box2dShape
     
-    bodyDef = new Box2D.Dynamics.b2BodyDef
-    bodyDef.position.x = xMeters
-    bodyDef.position.y = yMeters
-    bodyDef.angle = Math.PI * angleDegrees / 180 
-    bodyDef.angularVelocity = (attributes.angularVelocity or 0)
-    bodyDef.linearVelocity = new Box2D.Common.Math.b2Vec2(attributes.initXVelocity or 0, attributes.initYVelocity or 0)
-    if 'dynamic' == static_dynamic_type
-      bodyDef.type = Box2D.Dynamics.b2Body.b2_dynamicBody
-    else if 'static' == static_dynamic_type
-      bodyDef.type = Box2D.Dynamics.b2Body.b2_staticBody
-    else if 'kinematic' == static_dynamic_type
-      bodyDef.type = Box2D.Dynamics.b2Body.b2_kinematicBody
+    @bodyDef = new Box2D.Dynamics.b2BodyDef
+    @bodyDef.position.x = xMeters
+    @bodyDef.position.y = yMeters
+    @bodyDef.angle = Math.PI * angleDegrees / 180 
+    @bodyDef.angularVelocity = (options.angularVelocity or 0)
+    @bodyDef.linearVelocity = new Box2D.Common.Math.b2Vec2(options.initXVelocity or 0, options.initYVelocity or 0)
     
-    @body = b2dWorld.CreateBody(bodyDef)
-    @body.CreateFixture fixDef
-    
+    if 'dynamic' == staticDynamicType
+      @bodyDef.type = Box2D.Dynamics.b2Body.b2_dynamicBody
+    else if 'static' == staticDynamicType
+      @bodyDef.type = Box2D.Dynamics.b2Body.b2_staticBody
+    else if 'kinematic' == staticDynamicType
+      @bodyDef.type = Box2D.Dynamics.b2Body.b2_kinematicBody
+        
   update: ->
-    @easelObj.x = @body.GetPosition().x * PIXELS_PER_METER
-    @easelObj.y = @body.GetPosition().y * PIXELS_PER_METER
+    @easelObj.x = @body.GetPosition().x * @pixelsPerMeter
+    @easelObj.y = @body.GetPosition().y * @pixelsPerMeter
     @easelObj.rotation = @body.GetAngle() * (180 / Math.PI)
   
   setPosition: (xMeters, yMeters) ->
-    @easelObj.x = xMeters * PIXELS_PER_METER
-    @easelObj.y = yMeters * PIXELS_PER_METER
+    @easelObj.x = xMeters * @pixelsPerMeter
+    @easelObj.y = yMeters * @pixelsPerMeter
     @body.GetPosition().x = xMeters
     @body.GetPosition().y = yMeters
+    
+  setType: (type) ->
+    @body.SetType(getType(type))
+    
+  getType = (type) ->
+    if 'dynamic' == type
+      Box2D.Dynamics.b2Body.b2_dynamicBody
+    else if 'static' == type
+      Box2D.Dynamics.b2Body.b2_staticBody
+    else if 'kinematic' == type
+      Box2D.Dynamics.b2Body.b2_kinematicBody
+    

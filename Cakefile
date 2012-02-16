@@ -9,9 +9,9 @@ individual_file_args = ['-c', '-b', '-o', 'public/js/mylib', 'src/coffee']
 # some classes extend another, and those must already be defined.
 # Painful--better way?
 joined_file_args = ['-c', '-b', '-j', 'public/js/project.js', 
-  'src/coffee/main',
   'src/coffee/easel_box2d_object',
   'src/coffee/easel_box2d_image'
+  'src/coffee/easel_box2d_world',
   'src/coffee/game'   
 ]
 

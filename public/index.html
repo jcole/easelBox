@@ -38,12 +38,12 @@
     <div id="main" role="main">
       <div id="game">
         <p>Drawing on canvas with EaselJS</p>
-        <canvas id="easelCanvas"></canvas>
+        <canvas id="easelCanvas" width="480" height="350"></canvas>
         <p>(click and drag the head to sling it at the blocks)</p>
       </div>
       <div id="debug">
         <p>The debug drawing directly from Box2dWeb</p>
-        <canvas id="debugCanvas"></canvas>
+        <canvas id="debugCanvas" width="480" height="350"></canvas>
       </div>
     </div>
     <div id="stats"></div>
@@ -56,7 +56,11 @@
   <script src="/js/project.js"></script>
   <script>
     $(document).ready(function() {
-      new Main('easelCanvas', 'debugCanvas', 'stats');
+      canvas = document.getElementById('easelCanvas')
+      debugCanvas = document.getElementById('debugCanvas')
+      statsCanvas = document.getElementById('stats')
+      
+      new Game(canvas, debugCanvas, statsCanvas);
     });
   </script>
 </body>
