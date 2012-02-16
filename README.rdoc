@@ -1,11 +1,14 @@
-= Angry Birds clone with EaselJS and Box2dWeb
+= EaselJS-Box2dWeb
+== A Javascript wrapper for the EaselJS canvas rendering library and the Box2dWeb physics engine
 
-This project is a clone of Angry Birds that integrates the Box2dWeb[http://code.google.com/p/box2dweb/] Javascript 
+
+== Demo
+
+This demo is a clone of Angry Birds that integrates the Box2dWeb[http://code.google.com/p/box2dweb/] Javascript 
 library with custom rendering in EaselJS[http://easeljs.com].   The artwork is stolen from the awesome 
 {Seb Lee-Delisle's live coding example}[http://seb.ly/2012/01/live-iphone-coding-video-now-online/]
 of the game "Ghosts and Monsters" using the Corona SDK for buildling iOS and Android apps.
 
-Demo
 http://jeff-cole-projects.herokuapp.com/easel_box2d
 
 == Setup
@@ -24,11 +27,11 @@ http://jeff-cole-projects.herokuapp.com/easel_box2d
 
 == Docs
 
-EaselJS API
+EaselJS API  
 http://easeljs.com/docs/
 
-Box2dWeb
+Box2dWeb  
 http://code.google.com/p/box2dweb/
 
-Box2d API
+Box2d API  
 http://www.box2dflash.org/docs/2.1a/reference/
