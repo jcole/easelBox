@@ -230,8 +230,7 @@ Game = (function() {
       _this.head.initPositionXpixels = eventPress.stageX;
       _this.head.initPositionYpixels = eventPress.stageY;
       eventPress.onMouseMove = function(event) {
-        _this.head.movedPositionXpixels = event.stageX;
-        return _this.head.movedPositionYpixels = event.stageY;
+        return _this.head.setPosition(event.stageX / pixelsPerMeter, event.stageY / pixelsPerMeter);
       };
       return eventPress.onMouseUp = function(event) {
         var forceX, forceY;
@@ -280,10 +279,7 @@ Game = (function() {
   }
 
   Game.prototype.step = function() {
-    this.stats.update();
-    if (this.head.selected) {
-      return this.head.setPosition(this.head.movedPositionXpixels / pixelsPerMeter, this.head.movedPositionYpixels / pixelsPerMeter);
-    }
+    return this.stats.update();
   };
 
   return Game;

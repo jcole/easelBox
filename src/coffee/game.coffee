@@ -55,8 +55,7 @@ class Game
       @head.initPositionYpixels = eventPress.stageY
       
       eventPress.onMouseMove = (event) =>
-        @head.movedPositionXpixels = event.stageX
-        @head.movedPositionYpixels = event.stageY
+        @head.setPosition(event.stageX / pixelsPerMeter, event.stageY / pixelsPerMeter)
 
       eventPress.onMouseUp = (event) =>
         @head.selected = false
@@ -115,6 +114,4 @@ class Game
   step: () ->
     @stats.update()
     
-    if @head.selected
-      @head.setPosition(@head.movedPositionXpixels / pixelsPerMeter, @head.movedPositionYpixels / pixelsPerMeter)
                   
