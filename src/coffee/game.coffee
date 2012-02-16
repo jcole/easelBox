@@ -74,7 +74,6 @@ class Game
     levels = 3
     topOfPyramid = groundLevelMeters - levels *  (blockHeight + blockWidth) / pixelsPerMeter + 26 / pixelsPerMeter
     leftPyamid = (300) / pixelsPerMeter
-    @pyramidObjects = []     
     for i in [0...levels]
       for j in [0..i+1]
           x =  leftPyamid + (j-i/2) * blockHeight / pixelsPerMeter
@@ -89,7 +88,6 @@ class Game
               initXMeters: x, 
               initYMeters: y 
             })        
-          @pyramidObjects.push(myBlock)
           if j <= i
             myBlock = @world.addEntity(
               'bitmap',
@@ -102,8 +100,6 @@ class Game
                 initYMeters: y - (blockHeight/2 + blockWidth/2) / pixelsPerMeter,
                 angleDegrees: 90
               })
-            @pyramidObjects.push(myBlock)
-    
             ghost = @world.addEntity(
               'bitmap',
               'dynamic', 
@@ -114,9 +110,8 @@ class Game
                 initXMeters: x + (blockHeight/2) / pixelsPerMeter,
                 initYMeters: y + 11 / pixelsPerMeter
               })
-            @pyramidObjects.push(ghost)
 
-  # optional: a "step" method for EaselBox2dWorld callback on each tick()
+  # optional: a callback for each EaselBox2dWorld tick()
   step: () ->
     @stats.update()
     

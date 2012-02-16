@@ -247,7 +247,6 @@ Game = (function() {
     levels = 3;
     topOfPyramid = groundLevelMeters - levels * (blockHeight + blockWidth) / pixelsPerMeter + 26 / pixelsPerMeter;
     leftPyamid = 300. / pixelsPerMeter;
-    this.pyramidObjects = [];
     for (i = 0; 0 <= levels ? i < levels : i > levels; 0 <= levels ? i++ : i--) {
       for (j = 0, _ref = i + 1; 0 <= _ref ? j <= _ref : j >= _ref; 0 <= _ref ? j++ : j--) {
         x = leftPyamid + (j - i / 2) * blockHeight / pixelsPerMeter;
@@ -259,7 +258,6 @@ Game = (function() {
           initXMeters: x,
           initYMeters: y
         });
-        this.pyramidObjects.push(myBlock);
         if (j <= i) {
           myBlock = this.world.addEntity('bitmap', 'dynamic', {
             imgSrc: '/img/block1_15x60.png',
@@ -269,7 +267,6 @@ Game = (function() {
             initYMeters: y - (blockHeight / 2 + blockWidth / 2) / pixelsPerMeter,
             angleDegrees: 90
           });
-          this.pyramidObjects.push(myBlock);
           ghost = this.world.addEntity('bitmap', 'dynamic', {
             imgSrc: '/img/ghost_30x36.png',
             imgWidthPixels: 30,
@@ -277,7 +274,6 @@ Game = (function() {
             initXMeters: x + (blockHeight / 2) / pixelsPerMeter,
             initYMeters: y + 11 / pixelsPerMeter
           });
-          this.pyramidObjects.push(ghost);
         }
       }
     }
