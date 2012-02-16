@@ -1,5 +1,5 @@
 var PORT = 3000;
-var APP_ROOT = __dirname + '/';
+var APP_ROOT = __dirname + '/../examples/';
 
 var express = require('express');
 
@@ -9,7 +9,7 @@ app.configure(function() {
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(app.router);  
-  app.use(express.static(APP_ROOT + "public"));
+  app.use(express.static(APP_ROOT));
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true}));
 });
 

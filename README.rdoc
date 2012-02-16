@@ -1,6 +1,6 @@
 = EaselJS-Box2dWeb
-== A Javascript wrapper for the EaselJS canvas rendering library and the Box2dWeb physics engine
 
+A Javascript wrapper for the EaselJS canvas rendering library and the Box2dWeb physics engine
 
 == Demo
 
@@ -11,27 +11,25 @@ of the game "Ghosts and Monsters" using the Corona SDK for buildling iOS and And
 
 http://jeff-cole-projects.herokuapp.com/easel_box2d
 
-== Setup
+== To run examples
 
-  cd <project directory>
+  cd examples
   npm install
+  node app.js  
+  open browser to http://localhost:3000
 
-== To run server
-
-  node scripts/app.js  (go to http://localhost:3000)
-
-== To compile coffeescript
+== To re-build source
 
   cake watch  
 
 
 == Docs
 
-EaselJS API  
+EaselJS API
 http://easeljs.com/docs/
 
-Box2dWeb  
+Box2dWeb 
 http://code.google.com/p/box2dweb/
 
-Box2d API  
+Box2d API
 http://www.box2dflash.org/docs/2.1a/reference/
