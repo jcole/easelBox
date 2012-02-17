@@ -15,7 +15,7 @@ http://jeff-cole-projects.herokuapp.com/easel_box2d
 
 == To run examples
 
-  cd examples
+  cd server
   npm install
   node app.js  
   open browser to http://localhost:3000

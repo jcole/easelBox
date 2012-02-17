@@ -8,7 +8,9 @@ individual_file_args = ['-c', '-b', '-o', 'examples/js', 'src/examples']
 # Listing files in order here -- order matters becauase of class inheiritance
 joined_file_args = ['-c', '-b', '-j', 'examples/js/easelBox.js', 
   'src/easelBox/easelBoxObject',
-  'src/easelBox/easelBoxImage'
+  'src/easelBox/easelBoxImage',
+  'src/easelBox/easelBoxCircle',
+  'src/easelBox/easelBoxRectangle',
   'src/easelBox/easelBoxWorld',
 ]
 

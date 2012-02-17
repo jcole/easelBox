@@ -39,7 +39,7 @@ GhostsAndMonstersGame = (function() {
       scaleY: 1,
       y: worldHeightPixels - 254 * 1
     });
-    ground = this.world.addEntity('bitmap', 'static', {
+    ground = this.world.createEntity('bitmap', 'static', {
       imgSrc: '/img/ground-cropped.png',
       initXMeters: (1024 / 2) / pixelsPerMeter,
       initYMeters: groundLevelMeters,
@@ -50,7 +50,7 @@ GhostsAndMonstersGame = (function() {
       x: initHeadXPixels - 30,
       y: worldHeightPixels - 160
     });
-    this.head = this.world.addEntity('bitmap', 'static', {
+    this.head = this.world.createEntity(new EasyBoxCircle, 'bitmap', 'static', {
       imgSrc: '/img/exorcist_40x50.png',
       initXMeters: initHeadXPixels / pixelsPerMeter,
       initYMeters: groundLevelMeters - 140 / pixelsPerMeter,
@@ -82,7 +82,7 @@ GhostsAndMonstersGame = (function() {
       for (j = 0, _ref = i + 1; 0 <= _ref ? j <= _ref : j >= _ref; 0 <= _ref ? j++ : j--) {
         x = leftPyamid + (j - i / 2) * blockHeight / pixelsPerMeter;
         y = topOfPyramid + i * (blockHeight + blockWidth) / pixelsPerMeter;
-        myBlock = this.world.addEntity('bitmap', 'dynamic', {
+        myBlock = this.world.createEntity('bitmap', 'dynamic', {
           imgSrc: '/img/block1_15x60.png',
           imgWidthPixels: blockWidth,
           imgHeightPixels: blockHeight,
@@ -90,7 +90,7 @@ GhostsAndMonstersGame = (function() {
           initYMeters: y
         });
         if (j <= i) {
-          myBlock = this.world.addEntity('bitmap', 'dynamic', {
+          myBlock = this.world.createEntity('bitmap', 'dynamic', {
             imgSrc: '/img/block1_15x60.png',
             imgWidthPixels: blockWidth,
             imgHeightPixels: blockHeight,
@@ -98,7 +98,7 @@ GhostsAndMonstersGame = (function() {
             initYMeters: y - (blockHeight / 2 + blockWidth / 2) / pixelsPerMeter,
             angleDegrees: 90
           });
-          ghost = this.world.addEntity('bitmap', 'dynamic', {
+          ghost = this.world.createEntity('bitmap', 'dynamic', {
             imgSrc: '/img/ghost_30x36.png',
             imgWidthPixels: 30,
             imgHeightPixels: 36,

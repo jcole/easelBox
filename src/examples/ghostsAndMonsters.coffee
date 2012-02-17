@@ -25,7 +25,7 @@ class GhostsAndMonstersGame
     @world.addImage("/img/trees.png", {scaleX: 0.5, scaleY: 0.5, y: worldHeightPixels - 400 * 0.55})
     @world.addImage("/img/mountains.png", {scaleX: 1, scaleY: 1, y: worldHeightPixels - 254 * 1})
         
-    ground = @world.addEntity(
+    ground = @world.createEntity(
       'bitmap',
       'static',
       {
@@ -39,7 +39,8 @@ class GhostsAndMonstersGame
     @world.addImage("/img/catapult_50x150.png", {x: initHeadXPixels - 30, y:  worldHeightPixels - 160})
 
     # setup head
-    @head = @world.addEntity(
+    @head = @world.createEntity(
+      new EasyBoxCircle
       'bitmap',
       'static',
       {
@@ -77,7 +78,7 @@ class GhostsAndMonstersGame
       for j in [0..i+1]
           x =  leftPyamid + (j-i/2) * blockHeight / pixelsPerMeter
           y = topOfPyramid + i * (blockHeight + blockWidth) / pixelsPerMeter
-          myBlock =  @world.addEntity(
+          myBlock =  @world.createEntity(
             'bitmap',
             'dynamic', 
             {
@@ -88,7 +89,7 @@ class GhostsAndMonstersGame
               initYMeters: y 
             })        
           if j <= i
-            myBlock = @world.addEntity(
+            myBlock = @world.createEntity(
               'bitmap',
               'dynamic', 
               {
@@ -99,7 +100,7 @@ class GhostsAndMonstersGame
                 initYMeters: y - (blockHeight/2 + blockWidth/2) / pixelsPerMeter,
                 angleDegrees: 90
               })
-            ghost = @world.addEntity(
+            ghost = @world.createEntity(
               'bitmap',
               'dynamic', 
               {
