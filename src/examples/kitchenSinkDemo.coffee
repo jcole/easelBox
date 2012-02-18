@@ -27,18 +27,24 @@ class KitchenSinkDemo
       'dynamic',
       {
         xPixels: canvas.width * 3 / 4,
-        yPixels: canvas.height * 3 / 4,
+        yPixels: canvas.height * 5 / 6,
+        xVelPixels: -5
       })
     obj.easelObj.onPress = (eventPress) =>  
       alert('I am a circle with a bitmap')
 
-    for i in [0..5]
+    for i in [0..13]
       obj = @world.addEntity( 
-        new EaselBoxCircle(radius=4, {imgSrc: '/img/sparkle_21x23.png', frames: {width:21, height:23, regX:10, regY:11}}), 
+        new EaselBoxCircle(radius=4, {
+          imgSrc: '/img/sparkle_21x23.png', 
+          frames: {width:21, height:23, regX:10, regY:11}
+          startFrame: i
+          }), 
         'dynamic',
         {
-          xPixels: canvas.width * i / 5,
-          yPixels: 10,
+          xPixels: 20 + (canvas.width - 20) * i / 10,
+          yPixels: 20,
+          yVelPixels: 10
         })
       obj.easelObj.onPress = (eventPress) =>  
         alert('I am an animated bitmap')
@@ -50,7 +56,7 @@ class KitchenSinkDemo
       'dynamic',
       {
        xPixels: canvas.width * 3 / 4,
-       yPixels: canvas.height * 1 / 4,
+       yPixels: canvas.height * 1 / 2,
        angularVelRadians: -1
       })        
     obj.easelObj.onPress = (eventPress) =>  
@@ -76,6 +82,7 @@ class KitchenSinkDemo
       {
         xPixels: canvas.width * 5 / 6,
         yPixels: canvas.height * 1 / 2,
+        angularVelRadians: -1
       })
     obj.easelObj.onPress = (eventPress) =>  
       alert('I am a rectangle with a bitmap')
@@ -87,20 +94,5 @@ class KitchenSinkDemo
   
   tick: () ->
     @stats.update()
-    for object1 in @world.objects
-      for object2 in @world.objects
-        applyGravities object1, object2 unless object1 == object2
-
-  # some low-level Box2d action here
-  applyGravities = (obj1, obj2) ->
-    pos1 = obj1.body.GetWorldCenter()
-    pos2 = obj2.body.GetWorldCenter()
-    diffVec = pos2.Copy()
-    diffVec.Subtract(pos1)
-    distSq = diffVec.LengthSquared()
-    forceMagnitude = gravitationalConstant * obj1.body.GetMass() * obj2.body.GetMass() / distSq
-    diffVec.Normalize()    
-    diffVec.Multiply(forceMagnitude)
-    obj1.body.ApplyForce(diffVec, pos1)
     
     
