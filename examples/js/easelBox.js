@@ -1,52 +1,73 @@
-var EASEL_BOX_PIXELS_PER_METER, EaselBoxCircle, EaselBoxImage, EaselBoxObject, EaselBoxRectangle, EaselBoxWorld,
+var EaselBoxCircle, EaselBoxObject, EaselBoxRectangle, EaselBoxWorld, PIXELS_PER_METER,
   __hasProp = Object.prototype.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
 EaselBoxObject = (function() {
-  var body, getType;
+  var getType;
 
-  body = null;
-
-  function EaselBoxObject(easelObj, box2dShape, staticDynamicType, pixelsPerMeter, options) {
-    var angleDegrees, angleRadians, angularVelDegrees, angularVelRadians, density, friction, restitution, xMeters, xPixels, xVelMeters, xVelPixels, yMeters, yPixels, yVelMeters, yVelPixels;
+  function EaselBoxObject(easelObj, box2dShape, options) {
+    var density, friction, restitution;
     this.easelObj = easelObj;
-    this.pixelsPerMeter = pixelsPerMeter;
+    density = (options && options.density) || 1;
+    friction = (options && options.friction) || 0.5;
+    restitution = (options && options.restitution) || 0.2;
+    this.fixDef = new Box2D.Dynamics.b2FixtureDef;
+    this.fixDef.density = density;
+    this.fixDef.friction = friction;
+    this.fixDef.restitution = restitution;
+    this.fixDef.shape = box2dShape;
+    this.bodyDef = new Box2D.Dynamics.b2BodyDef;
+    this.body = null;
+  }
+
+  EaselBoxObject.prototype.update = function() {
+    this.easelObj.x = this.body.GetPosition().x * PIXELS_PER_METER;
+    this.easelObj.y = this.body.GetPosition().y * PIXELS_PER_METER;
+    return this.easelObj.rotation = this.body.GetAngle() * (180 / Math.PI);
+  };
+
+  EaselBoxObject.prototype.setType = function(type) {
+    return this.body.SetType(getType(type));
+  };
+
+  EaselBoxObject.prototype.setState = function(options) {
+    var angleDegrees, angleRadians, angularVelDegrees, angularVelRadians, xMeters, xPixels, xVelMeters, xVelPixels, yMeters, yPixels, yVelMeters, yVelPixels;
     if (options && options.xPixels) {
       xPixels = options.xPixels;
-      xMeters = xPixels / this.pixelsPerMeter;
+      xMeters = xPixels / PIXELS_PER_METER;
     } else if (options && options.Xmeters) {
       xMeters = options.Xmeters;
-      xPixels = xMeters * this.pixelsPerMeter;
+      xPixels = xMeters * PIXELS_PER_METER;
     } else {
       xMeters = 0;
       xPixels = 0;
     }
     if (options && options.yPixels) {
       yPixels = options.yPixels;
-      yMeters = yPixels / this.pixelsPerMeter;
+      yMeters = yPixels / PIXELS_PER_METER;
     } else if (options && options.Xmeters) {
       yMeters = options.Ymeters;
-      yPixels = YMeters * this.pixelsPerMeter;
+      yPixels = YMeters * PIXELS_PER_METER;
     } else {
       yMeters = 0;
       yPixels = 0;
     }
     if (options && options.xVelPixels) {
       xVelPixels = options.xVelPixels;
-      xVelMeters = xVelPixels / this.pixelsPerMeter;
+      xVelMeters = xVelPixels / PIXELS_PER_METER;
     } else if (options && options.xVelMeters) {
       xVelMeters = options.xVelMeters;
-      xVelPixels = xVelMeters * this.pixelsPerMeter;
+      xVelPixels = xVelMeters * PIXELS_PER_METER;
     } else {
       xVelMeters = 0;
       xVelPixels = 0;
     }
     if (options && options.yVelPixels) {
       yVelPixels = options.yVelPixels;
-      yVelMeters = yVelPixels / this.pixelsPerMeter;
+      yVelMeters = yVelPixels / PIXELS_PER_METER;
     } else if (options && options.yVelMeters) {
       yVelMeters = options.yVelMeters;
-      yVelPixels = yVelMeters * this.pixelsPerMeter;
+      yVelPixels = yVelMeters * PIXELS_PER_METER;
     } else {
       yVelMeters = 0;
       yVelPixels = 0;
@@ -71,47 +92,14 @@ EaselBoxObject = (function() {
       angularVelDegrees = 0;
       angularVelRadians = 0;
     }
-    density = (options && options.density) || 1;
-    friction = (options && options.friction) || 0.5;
-    restitution = (options && options.restitution) || 0.2;
     this.easelObj.x = xPixels;
     this.easelObj.y = yPixels;
     this.easelObj.rotation = angleDegrees;
-    this.fixDef = new Box2D.Dynamics.b2FixtureDef;
-    this.fixDef.density = density;
-    this.fixDef.friction = friction;
-    this.fixDef.restitution = restitution;
-    this.fixDef.shape = box2dShape;
-    this.bodyDef = new Box2D.Dynamics.b2BodyDef;
-    this.bodyDef.position.x = xMeters;
-    this.bodyDef.position.y = yMeters;
-    this.bodyDef.angle = angleRadians;
-    this.bodyDef.angularVelocity = angularVelRadians;
-    this.bodyDef.linearVelocity = new Box2D.Common.Math.b2Vec2(xVelMeters, yVelMeters);
-    if ('dynamic' === staticDynamicType) {
-      this.bodyDef.type = Box2D.Dynamics.b2Body.b2_dynamicBody;
-    } else if ('static' === staticDynamicType) {
-      this.bodyDef.type = Box2D.Dynamics.b2Body.b2_staticBody;
-    } else if ('kinematic' === staticDynamicType) {
-      this.bodyDef.type = Box2D.Dynamics.b2Body.b2_kinematicBody;
-    }
-  }
-
-  EaselBoxObject.prototype.update = function() {
-    this.easelObj.x = this.body.GetPosition().x * this.pixelsPerMeter;
-    this.easelObj.y = this.body.GetPosition().y * this.pixelsPerMeter;
-    return this.easelObj.rotation = this.body.GetAngle() * (180 / Math.PI);
-  };
-
-  EaselBoxObject.prototype.setPosition = function(xMeters, yMeters) {
-    this.easelObj.x = xMeters * this.pixelsPerMeter;
-    this.easelObj.y = yMeters * this.pixelsPerMeter;
     this.body.GetPosition().x = xMeters;
-    return this.body.GetPosition().y = yMeters;
-  };
-
-  EaselBoxObject.prototype.setType = function(type) {
-    return this.body.SetType(getType(type));
+    this.body.GetPosition().y = yMeters;
+    this.body.SetAngle(angleRadians);
+    this.body.SetAngularVelocity(angularVelRadians);
+    return this.body.SetLinearVelocity(new Box2D.Common.Math.b2Vec2(xVelMeters, yVelMeters));
   };
 
   getType = function(type) {
@@ -128,62 +116,36 @@ EaselBoxObject = (function() {
 
 })();
 
-EaselBoxImage = (function(_super) {
-
-  __extends(EaselBoxImage, _super);
-
-  function EaselBoxImage(imgSrc, staticDynamicType, pixelsPerMeter, options) {
-    var bMap, box2dShape, heightMeters, heightPixels, radiusMeters, widthMeters, widthPixels;
-    bMap = new Bitmap(imgSrc);
-    if (options.imgRadiusPixels) {
-      radiusMeters = options.imgRadiusPixels / pixelsPerMeter;
-      box2dShape = new Box2D.Collision.Shapes.b2CircleShape(radiusMeters);
-      bMap.regX = options.imgRadiusPixels;
-      bMap.regY = options.imgRadiusPixels;
-    } else {
-      widthPixels = options.imgWidthPixels;
-      heightPixels = options.imgHeightPixels;
-      bMap.regX = widthPixels / 2;
-      bMap.regY = heightPixels / 2;
-      widthMeters = (widthPixels / 2) / pixelsPerMeter;
-      heightMeters = (heightPixels / 2) / pixelsPerMeter;
-      box2dShape = new Box2D.Collision.Shapes.b2PolygonShape.AsBox(widthMeters, heightMeters);
-    }
-    EaselBoxImage.__super__.constructor.call(this, bMap, box2dShape, staticDynamicType, pixelsPerMeter, options);
-  }
-
-  return EaselBoxImage;
-
-})(EaselBoxObject);
-
 EaselBoxCircle = (function(_super) {
 
   __extends(EaselBoxCircle, _super);
 
-  function EaselBoxCircle(staticDynamicType, pixelsPerMeter, options) {
-    var box2dShape, object, radiusMeters, radiusPixels;
+  function EaselBoxCircle(radiusPixels, options) {
+    var bmpAnim, box2dShape, data, object, radiusMeters;
+    if (radiusPixels == null) radiusPixels = 20;
     if (options == null) options = null;
-    if (options && options.radiusMeters) {
-      radiusMeters = options.radiusMeters;
-      radiusPixels = radiusMeters * pixelsPerMeter;
-    } else if (options && options.radiusPixels) {
-      radiusPixels = options.radiusPixels;
-      radiusMeters = radiusPixels / pixelsPerMeter;
-    } else {
-      radiusMeters = 1;
-      radiusPixels = radiusMeters * pixelsPerMeter;
-    }
+    radiusMeters = radiusPixels / PIXELS_PER_METER;
     box2dShape = new Box2D.Collision.Shapes.b2CircleShape(radiusMeters);
     object = null;
     if (options && options.imgSrc) {
-      object = new Bitmap(options.imgSrc);
+      if (options && options.frames) {
+        data = {
+          images: [options.imgSrc],
+          frames: options.frames
+        };
+        bmpAnim = new BitmapAnimation(new SpriteSheet(data));
+        object = bmpAnim.clone();
+        object.gotoAndPlay(Math.random() * object.spriteSheet.getNumFrames() | 0);
+      } else {
+        object = new Bitmap(options.imgSrc);
+      }
       object.regX = radiusPixels;
       object.regY = radiusPixels;
     } else {
       object = new Shape();
       object.graphics.beginRadialGradientFill(["#F00", "#00F"], [0.1, .9], 0, 0, 0, 0, 0, radiusPixels).drawCircle(0, 0, radiusPixels).beginFill("#FFF").drawRect(0, -1, radiusPixels, 2);
     }
-    EaselBoxCircle.__super__.constructor.call(this, object, box2dShape, staticDynamicType, pixelsPerMeter, options);
+    EaselBoxCircle.__super__.constructor.call(this, object, box2dShape, options);
   }
 
   return EaselBoxCircle;
@@ -194,40 +156,29 @@ EaselBoxRectangle = (function(_super) {
 
   __extends(EaselBoxRectangle, _super);
 
-  function EaselBoxRectangle(staticDynamicType, pixelsPerMeter, options) {
-    var box2dShape, heightMeters, heightPixels, shape, widthMeters, widthPixels;
+  function EaselBoxRectangle(widthPixels, heightPixels, options) {
+    var box2dShape, heightMeters, object, widthMeters;
     if (options == null) options = null;
-    if (options && options.widthMeters) {
-      widthMeters = options.widthMeters;
-      widthPixels = widthMeters * pixelsPerMeter;
-    } else if (options && options.widthPixels) {
-      widthPixels = options.widthPixels;
-      widthMeters = widthPixels / pixelsPerMeter;
-    } else {
-      widthMeters = 1;
-      widthPixels = widthMeters * pixelsPerMeter;
-    }
-    if (options && options.heightMeters) {
-      heightMeters = options.heightMeters;
-      heightPixels = heightMeters * pixelsPerMeter;
-    } else if (options && options.heightPixels) {
-      heightPixels = options.heightPixels;
-      heightMeters = heightPixels / pixelsPerMeter;
-    } else {
-      heightMeters = 1;
-      heightPixels = heightMeters * pixelsPerMeter;
-    }
+    widthMeters = widthPixels / PIXELS_PER_METER;
+    heightMeters = heightPixels / PIXELS_PER_METER;
     box2dShape = new Box2D.Collision.Shapes.b2PolygonShape.AsBox(widthMeters / 2, heightMeters / 2);
-    shape = new Shape();
-    shape.graphics.beginLinearGradientFill(["#F00", "#00F"], [0, 0.5], -widthPixels / 2, 0, widthPixels, 0).drawRect(-widthPixels / 2, -heightPixels / 2, widthPixels, heightPixels);
-    EaselBoxRectangle.__super__.constructor.call(this, shape, box2dShape, staticDynamicType, pixelsPerMeter, options);
+    object = null;
+    if (options && options.imgSrc) {
+      object = new Bitmap(options.imgSrc);
+      object.regX = widthPixels / 2;
+      object.regY = heightPixels / 2;
+    } else {
+      object = new Shape();
+      object.graphics.beginLinearGradientFill(["#F00", "#00F"], [0, 0.5], -widthPixels / 2, 0, widthPixels, 0).drawRect(-widthPixels / 2, -heightPixels / 2, widthPixels, heightPixels);
+    }
+    EaselBoxRectangle.__super__.constructor.call(this, object, box2dShape, options);
   }
 
   return EaselBoxRectangle;
 
 })(EaselBoxObject);
 
-EASEL_BOX_PIXELS_PER_METER = 30;
+PIXELS_PER_METER = 30;
 
 EaselBoxWorld = (function() {
   var minFPS;
@@ -238,7 +189,7 @@ EaselBoxWorld = (function() {
     var debugDraw;
     this.callingObj = callingObj;
     this.pixelsPerMeter = pixelsPerMeter;
-    EASEL_BOX_PIXELS_PER_METER = this.pixelsPerMeter;
+    PIXELS_PER_METER = this.pixelsPerMeter;
     Ticker.addListener(this);
     Ticker.setFPS(frameRate);
     this.box2dWorld = new Box2D.Dynamics.b2World(new Box2D.Common.Math.b2Vec2(gravityX, gravityY), true);
@@ -253,19 +204,12 @@ EaselBoxWorld = (function() {
     this.box2dWorld.SetDebugDraw(debugDraw);
   }
 
-  EaselBoxWorld.prototype.createEntity = function(type, staticDynamicType, options) {
-    var object;
-    object = null;
-    if (type === 'bitmap') {
-      object = new EaselBoxImage(options.imgSrc, staticDynamicType, this.pixelsPerMeter, options);
-    } else if (type === 'circle') {
-      object = new EaselBoxCircle(staticDynamicType, this.pixelsPerMeter, options);
-    } else if (type === 'rectangle') {
-      object = new EaselBoxRectangle(staticDynamicType, this.pixelsPerMeter, options);
-    }
+  EaselBoxWorld.prototype.addEntity = function(object, staticDynamicType, positionOptions) {
     this.easelStage.addChild(object.easelObj);
     object.body = this.box2dWorld.CreateBody(object.bodyDef);
     object.body.CreateFixture(object.fixDef);
+    object.setType(staticDynamicType);
+    object.setState(positionOptions);
     this.objects.push(object);
     return object;
   };

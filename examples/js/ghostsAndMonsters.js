@@ -1,9 +1,9 @@
 var GhostsAndMonstersGame;
 
 GhostsAndMonstersGame = (function() {
-  var forceMultiplier, frameRate, gravityX, gravityY, pixelsPerMeter;
+  var PIXELS_PER_METER, forceMultiplier, frameRate, gravityX, gravityY;
 
-  pixelsPerMeter = 30;
+  PIXELS_PER_METER = 30;
 
   gravityX = 0;
 
@@ -14,17 +14,15 @@ GhostsAndMonstersGame = (function() {
   forceMultiplier = 5;
 
   function GhostsAndMonstersGame(canvas, debugCanvas, statsCanvas) {
-    var blockHeight, blockWidth, ghost, ground, groundLevelMeters, i, initHeadXPixels, j, leftPyamid, levels, myBlock, topOfPyramid, worldHeightMeters, worldHeightPixels, worldWidthMeters, worldWidthPixels, x, y, _ref,
+    var blockHeight, blockWidth, ghost, ground, groundLevelPixels, height, i, initHeadXPixels, j, leftPyamid, levels, myBlock, topOfPyramid, width, worldHeightPixels, worldWidthPixels, x, y, _ref,
       _this = this;
-    this.world = new EaselBoxWorld(this, frameRate, canvas, debugCanvas, gravityX, gravityY, pixelsPerMeter);
+    this.world = new EaselBoxWorld(this, frameRate, canvas, debugCanvas, gravityX, gravityY, PIXELS_PER_METER);
     this.stats = new Stats();
     statsCanvas.appendChild(this.stats.domElement);
     worldWidthPixels = canvas.width;
     worldHeightPixels = canvas.height;
-    worldWidthMeters = worldWidthPixels / pixelsPerMeter;
-    worldHeightMeters = worldHeightPixels / pixelsPerMeter;
     initHeadXPixels = 100;
-    groundLevelMeters = worldHeightMeters - ((37 / 2) / pixelsPerMeter);
+    groundLevelPixels = worldHeightPixels - (37 / 2);
     this.world.addImage("/img/sky.jpg", {
       scaleX: 1.3,
       scaleY: 1.3
@@ -39,22 +37,21 @@ GhostsAndMonstersGame = (function() {
       scaleY: 1,
       y: worldHeightPixels - 254 * 1
     });
-    ground = this.world.createEntity('bitmap', 'static', {
-      imgSrc: '/img/ground-cropped.png',
-      initXMeters: (1024 / 2) / pixelsPerMeter,
-      initYMeters: groundLevelMeters,
-      imgWidthPixels: 1024,
-      imgHeightPixels: 37
+    ground = this.world.addEntity(new EaselBoxRectangle(width = 1024, height = 37, {
+      imgSrc: '/img/ground-cropped.png'
+    }), 'static', {
+      xPixels: 0,
+      yPixels: groundLevelPixels
     });
     this.world.addImage("/img/catapult_50x150.png", {
       x: initHeadXPixels - 30,
       y: worldHeightPixels - 160
     });
-    this.head = this.world.createEntity(new EasyBoxCircle, 'bitmap', 'static', {
-      imgSrc: '/img/exorcist_40x50.png',
-      initXMeters: initHeadXPixels / pixelsPerMeter,
-      initYMeters: groundLevelMeters - 140 / pixelsPerMeter,
-      imgRadiusPixels: 20
+    this.head = this.world.addEntity(new EaselBoxCircle(20, {
+      imgSrc: '/img/exorcist_40x50.png'
+    }), 'static', {
+      xPixels: initHeadXPixels,
+      yPixels: groundLevelPixels - 140
     });
     this.head.selected = false;
     this.head.easelObj.onPress = function(eventPress) {
@@ -62,7 +59,10 @@ GhostsAndMonstersGame = (function() {
       _this.head.initPositionXpixels = eventPress.stageX;
       _this.head.initPositionYpixels = eventPress.stageY;
       eventPress.onMouseMove = function(event) {
-        return _this.head.setPosition(event.stageX / pixelsPerMeter, event.stageY / pixelsPerMeter);
+        return _this.head.setState({
+          xPixels: event.stageX,
+          yPixels: event.stageY
+        });
       };
       return eventPress.onMouseUp = function(event) {
         var forceX, forceY;
@@ -75,35 +75,32 @@ GhostsAndMonstersGame = (function() {
     };
     blockWidth = 15;
     blockHeight = 60;
+    leftPyamid = 300;
     levels = 3;
-    topOfPyramid = groundLevelMeters - levels * (blockHeight + blockWidth) / pixelsPerMeter + 26 / pixelsPerMeter;
-    leftPyamid = 300. / pixelsPerMeter;
+    topOfPyramid = groundLevelPixels - levels * (blockHeight + blockWidth) + 26;
     for (i = 0; 0 <= levels ? i < levels : i > levels; 0 <= levels ? i++ : i--) {
       for (j = 0, _ref = i + 1; 0 <= _ref ? j <= _ref : j >= _ref; 0 <= _ref ? j++ : j--) {
-        x = leftPyamid + (j - i / 2) * blockHeight / pixelsPerMeter;
-        y = topOfPyramid + i * (blockHeight + blockWidth) / pixelsPerMeter;
-        myBlock = this.world.createEntity('bitmap', 'dynamic', {
-          imgSrc: '/img/block1_15x60.png',
-          imgWidthPixels: blockWidth,
-          imgHeightPixels: blockHeight,
-          initXMeters: x,
-          initYMeters: y
+        x = leftPyamid + (j - i / 2) * blockHeight;
+        y = topOfPyramid + i * (blockHeight + blockWidth);
+        myBlock = this.world.addEntity(new EaselBoxRectangle(width = blockWidth, height = blockHeight, {
+          imgSrc: '/img/block1_15x60.png'
+        }), 'dynamic', {
+          xPixels: x,
+          yPixels: y
         });
         if (j <= i) {
-          myBlock = this.world.createEntity('bitmap', 'dynamic', {
-            imgSrc: '/img/block1_15x60.png',
-            imgWidthPixels: blockWidth,
-            imgHeightPixels: blockHeight,
-            initXMeters: x + (blockHeight / 2) / pixelsPerMeter,
-            initYMeters: y - (blockHeight / 2 + blockWidth / 2) / pixelsPerMeter,
+          myBlock = this.world.addEntity(new EaselBoxRectangle(width = blockWidth, height = blockHeight, {
+            imgSrc: '/img/block1_15x60.png'
+          }), 'dynamic', {
+            xPixels: x + blockHeight / 2,
+            yPixels: y - (blockHeight + blockWidth) / 2,
             angleDegrees: 90
           });
-          ghost = this.world.createEntity('bitmap', 'dynamic', {
-            imgSrc: '/img/ghost_30x36.png',
-            imgWidthPixels: 30,
-            imgHeightPixels: 36,
-            initXMeters: x + (blockHeight / 2) / pixelsPerMeter,
-            initYMeters: y + 11 / pixelsPerMeter
+          ghost = this.world.addEntity(new EaselBoxRectangle(width = 30, height = 36, {
+            imgSrc: '/img/ghost_30x36.png'
+          }), 'dynamic', {
+            xPixels: x + (blockHeight / 2),
+            yPixels: y + 11
           });
         }
       }

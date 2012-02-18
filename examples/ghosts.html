@@ -1,8 +1,8 @@
 <!doctype html>
 <head>
   <meta charset="utf-8">
-  <title>Jeff Test Game</title>
-  <meta name="description" content="A test game!">
+  <title>EaselBox demo: Ghosts and Monsters clone</title>
+  <meta name="description" content="A demonstrating of EaselBox, a wrapper for EaselJS and Box2dWeb">
   <meta name="author" content="Jeff Cole">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="css/main.css">
@@ -10,6 +10,10 @@
 
 <body>
   <style>
+    #main {
+      width: 1050px;
+      margin: 10px 0 0 10px;
+    }
     #game{
     	clear: left;
     	float: left;
@@ -36,10 +40,15 @@
   <div id="container">
     <header></header>
     <div id="main" role="main">
+      <p>This demo is a clone of Angry Birds that integrates the Box2dWeb Javascript 
+      library with custom rendering in EaselJS.   The artwork is stolen from the awesome 
+      <a href="http://seb.ly/2012/01/live-iphone-coding-video-now-online/">Seb Lee-Delisle's live coding example</a>
+      of the game "Ghosts and Monsters" using the Corona SDK for buildling iOS and Android apps.
+      </p>
+      <p>To play: click and drag the head to the left, then relase it to sling it at the blocks</p>
       <div id="game">
         <p>Drawing on canvas with EaselJS</p>
         <canvas id="easelCanvas" width="480" height="350"></canvas>
-        <p>(click and drag the head to sling it at the blocks)</p>
       </div>
       <div id="debug">
         <p>The debug drawing directly from Box2dWeb</p>

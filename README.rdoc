@@ -4,16 +4,11 @@ EaselBox is a Javascript wrapper for the EaselJS canvas rendering library and th
 
 EaselBox adds convenience methods to create those objects, as well as giving you direct access to the underlying EaselJS and Box2dWeb entities if you'd like to manipulate them directly.
 
-== Demo
-
-This demo is a clone of Angry Birds that integrates the Box2dWeb[http://code.google.com/p/box2dweb/] Javascript 
-library with custom rendering in EaselJS[http://easeljs.com].   The artwork is stolen from the awesome 
-{Seb Lee-Delisle's live coding example}[http://seb.ly/2012/01/live-iphone-coding-video-now-online/]
-of the game "Ghosts and Monsters" using the Corona SDK for buildling iOS and Android apps.
+== Examples
 
 http://jeff-cole-projects.herokuapp.com/easel_box2d
 
-== To run examples
+== To run examples locally
 
   cd server
   npm install

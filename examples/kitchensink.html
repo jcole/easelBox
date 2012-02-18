@@ -1,8 +1,8 @@
 <!doctype html>
 <head>
   <meta charset="utf-8">
-  <title>Gravity</title>
-  <meta name="description" content="A test game!">
+  <title>EaselBox: Kitchen sink demo</title>
+  <meta name="description" content="A demonstrating of EaselBox, a wrapper for EaselJS and Box2dWeb">
   <meta name="author" content="Jeff Cole">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="css/main.css">
@@ -10,6 +10,10 @@
 
 <body>
   <style>
+    #main {
+      width: 1050px;
+      margin: 10px 0 0 10px;
+    }
     #game{
     	clear: left;
     	float: left;
@@ -36,10 +40,10 @@
   <div id="container">
     <header></header>
     <div id="main" role="main">
+      <p>A demo of the different kinds of entities you can draw with EaselBox: vector shapes, shapes with custom rendeirng logic, bitmaps, and animated bitmaps.</p>
       <div id="game">
         <p>Drawing on canvas with EaselJS</p>
         <canvas id="easelCanvas" width="480" height="350"></canvas>
-        <p>(click and drag the head to sling it at the blocks)</p>
       </div>
       <div id="debug">
         <p>The debug drawing directly from Box2dWeb</p>
@@ -54,14 +58,14 @@
   <script src="/js/lib/easel.js"></script>
   <script src="/js/lib/Box2dWeb-2.1.a.3.min.js"></script>
   <script src="/js/easelBox.js"></script>
-  <script src="/js/gravityDemo.js"></script>
+  <script src="/js/kitchenSinkDemo.js"></script>
   <script>
     $(document).ready(function() {
       canvas = document.getElementById('easelCanvas')
       debugCanvas = document.getElementById('debugCanvas')
       statsCanvas = document.getElementById('stats')
       
-      new GravityDemo(canvas, debugCanvas, statsCanvas);
+      new KitchenSinkDemo(canvas, debugCanvas, statsCanvas);
     });
   </script>
 </body>
