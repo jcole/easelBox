@@ -135,7 +135,7 @@ EaselBoxCircle = (function(_super) {
         };
         bmpAnim = new BitmapAnimation(new SpriteSheet(data));
         object = bmpAnim.clone();
-        object.gotoAndPlay(Math.random() * object.spriteSheet.getNumFrames() | 0);
+        object.gotoAndPlay(options.startFrame | 0);
       } else {
         object = new Bitmap(options.imgSrc);
       }

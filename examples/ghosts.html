@@ -2,51 +2,22 @@
 <head>
   <meta charset="utf-8">
   <title>EaselBox demo: Ghosts and Monsters clone</title>
-  <meta name="description" content="A demonstrating of EaselBox, a wrapper for EaselJS and Box2dWeb">
+  <meta name="description" content="A demonstration of EaselBox, a wrapper for EaselJS and Box2dWeb">
   <meta name="author" content="Jeff Cole">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="css/main.css">
 </head>
 
 <body>
-  <style>
-    #main {
-      width: 1050px;
-      margin: 10px 0 0 10px;
-    }
-    #game{
-    	clear: left;
-    	float: left;
-    	width: 500px;
-    	padding: 20px 0;
-    	margin: 0 0 0 10px;
-    	display: inline;
-    }
-    #debug{
-    	float: left;
-    	width: 500px;
-    	padding: 20px 0;
-    	margin: 0 10px 0 10px;
-    	display: inline;
-    }
-    #stats {
-      clear: both;
-    	margin: 0 0 0 10px;
-    }
-    canvas {
-      background-color: #000;
-    }
-  </style>
   <div id="container">
-    <header></header>
+    <p>This demo is a clone of Angry Birds that integrates the Box2dWeb Javascript 
+    library with custom rendering in EaselJS.   The artwork is stolen from the awesome 
+    <a href="http://seb.ly/2012/01/live-iphone-coding-video-now-online/">Seb Lee-Delisle's live coding example</a>
+    of the game "Ghosts and Monsters" using the Corona SDK for buildling iOS and Android apps.
+    </p>
     <div id="main" role="main">
-      <p>This demo is a clone of Angry Birds that integrates the Box2dWeb Javascript 
-      library with custom rendering in EaselJS.   The artwork is stolen from the awesome 
-      <a href="http://seb.ly/2012/01/live-iphone-coding-video-now-online/">Seb Lee-Delisle's live coding example</a>
-      of the game "Ghosts and Monsters" using the Corona SDK for buildling iOS and Android apps.
-      </p>
       <p>To play: click and drag the head to the left, then relase it to sling it at the blocks</p>
-      <div id="game">
+      <div id="demo">
         <p>Drawing on canvas with EaselJS</p>
         <canvas id="easelCanvas" width="480" height="350"></canvas>
       </div>
@@ -57,7 +28,6 @@
     </div>
     <div id="stats"></div>
   </div>
-
   <script src="/js/lib/jquery-1.7.1.min.js"></script>
   <script src="/js/lib/stats.js"></script>
   <script src="/js/lib/easel.js"></script>
