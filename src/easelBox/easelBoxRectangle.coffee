@@ -1,4 +1,4 @@
-class EaselBoxRectangle extends EaselBoxObject   
+class window.EaselBoxRectangle extends EaselBoxObject   
   
   constructor: (widthPixels, heightPixels, options=null) ->  
     widthMeters = widthPixels / PIXELS_PER_METER

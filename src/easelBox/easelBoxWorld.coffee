@@ -1,6 +1,6 @@
 PIXELS_PER_METER = 30
 
-class EaselBoxWorld
+class window.EaselBoxWorld
   minFPS = 10 # weird stuff happens when we step through the physics when the frame rate is lower than this
   
   constructor: (@callingObj, frameRate, canvas, debugCanvas, gravityX, gravityY, @pixelsPerMeter) -> 
@@ -27,12 +27,19 @@ class EaselBoxWorld
     debugDraw.SetFlags Box2D.Dynamics.b2DebugDraw.e_shapeBit | Box2D.Dynamics.b2DebugDraw.e_jointBit
     @box2dWorld.SetDebugDraw debugDraw
       
-  addEntity: (object, staticDynamicType, positionOptions) -> 
+  addEntity: (options) -> 
+    object = null
+    if options.radiusPixels
+      object = new EaselBoxCircle(options.radiusPixels, options)
+    else
+      object = new EaselBoxRectangle(options.widthPixels, options.heightPixels, options)
+
     @easelStage.addChild object.easelObj
     object.body = @box2dWorld.CreateBody(object.bodyDef)
     object.body.CreateFixture(object.fixDef)
-    object.setType(staticDynamicType)
-    object.setState(positionOptions)
+    object.setType(options.type || 'dynamic')
+    object.setState(options)
+    
     @objects.push(object)
     return object
       

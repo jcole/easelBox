@@ -1,4 +1,4 @@
-class EaselBoxCircle extends EaselBoxObject   
+class window.EaselBoxCircle extends EaselBoxObject   
   
   constructor: (radiusPixels=20, options=null) ->  
     radiusMeters = radiusPixels / PIXELS_PER_METER
@@ -12,7 +12,7 @@ class EaselBoxCircle extends EaselBoxObject
       if options and options.frames      
         data = {
                   images: [options.imgSrc],
-                  frames: options.frames
+                  frames: options.frames,
                 }     
         bmpAnim = new BitmapAnimation(new SpriteSheet(data))
         object = bmpAnim.clone()
@@ -20,6 +20,8 @@ class EaselBoxCircle extends EaselBoxObject
       else
         object = new Bitmap(options.imgSrc)
 
+      object.scaleX = options.scaleX || 1
+      object.scaleY = options.scaleY || 1
       object.regX = radiusPixels
       object.regY = radiusPixels      
     else

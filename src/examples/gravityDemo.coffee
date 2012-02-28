@@ -1,4 +1,4 @@
-class GravityDemo
+class window.GravityDemo
   # to set up Easel-Box2d world
   pixelsPerMeter = 30
   gravityX = 0
@@ -11,19 +11,20 @@ class GravityDemo
     @world = new EaselBoxWorld(this, frameRate, canvas, debugCanvas, gravityX, gravityY, pixelsPerMeter)
     
     @world.addEntity( 
-      new EaselBoxCircle(radius=15), 
-      'dynamic',
-      {
-        xPixels: canvas.width * 2 / 3,
-        yPixels: canvas.height * 2 / 3,
-        angleRadians: 45,
-        angularVelRadians: 2
-      })    
+      radiusPixels: 20,
+      scaleX: 0.25,
+      scaleY: 0.25,
+      imgSrc: 'img/Earth.png',
+      frames: {width:213, height:160, count: 13, regX:106, regY:82},
+      xPixels: canvas.width * 2 / 3,
+      yPixels: canvas.height * 2 / 3,
+      angleRadians: 45,
+      angularVelRadians: 2)    
 
-    for i in [0..10]
-      for j in [0..10]
-        x =  -40 + Math.floor(Math.random()*80) + canvas.width * i / 10
-        y = -40 + Math.floor(Math.random()*80) + canvas.height * j / 10
+    for i in [0..4]
+      for j in [0..3]
+        x =  -40 + Math.floor(Math.random()*80) + canvas.width * i / 4
+        y = -40 + Math.floor(Math.random()*80) + canvas.height * j / 3
         xVel = -10 + Math.floor(Math.random()*20)
         yVel = -10 + Math.floor(Math.random()*20)
         this.addSparkle x, y, xVel, yVel
@@ -37,18 +38,14 @@ class GravityDemo
 
   addSparkle: (spX, spY, xVel, yVel) ->
     @world.addEntity(                     
-      new EaselBoxCircle(radius=4, {
-          imgSrc: '/img/sparkle_21x23.png', 
-          frames: {width:21, height:23, regX:10, regY:11},
-          startFrame: Math.random() * 13
-          }), 
-      'dynamic',
-      {
-        xPixels: spX,
-        yPixels: spY,
-        xVelPixels: xVel,
-        yVelPixels: yVel
-        })     
+      radiusPixels: 4,
+      imgSrc: '/img/sparkle_21x23.png', 
+      frames: {width:21, height:23, regX:10, regY:11},
+      startFrame: Math.random() * 13, 
+      xPixels: spX,
+      yPixels: spY,
+      xVelPixels: xVel,
+      yVelPixels: yVel)     
      
   tick: () ->
     @stats.update()

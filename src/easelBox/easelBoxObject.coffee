@@ -1,4 +1,4 @@
-class EaselBoxObject
+class window.EaselBoxObject
   
   constructor: (@easelObj, box2dShape, options) -> 
     density = (options and options.density) or 1
