@@ -9,6 +9,8 @@ class window.GravityDemo
   
   constructor: (canvas, debugCanvas, statsCanvas) ->    
     @world = new EaselBoxWorld(this, frameRate, canvas, debugCanvas, gravityX, gravityY, pixelsPerMeter)
+
+    @world.addImage("/img/space.jpg")
     
     @world.addEntity( 
       radiusPixels: 20,

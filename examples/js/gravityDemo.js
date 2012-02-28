@@ -17,6 +17,7 @@
       var i, j, x, xVel, y, yVel,
         _this = this;
       this.world = new EaselBoxWorld(this, frameRate, canvas, debugCanvas, gravityX, gravityY, pixelsPerMeter);
+      this.world.addImage("/img/space.jpg");
       this.world.addEntity({
         radiusPixels: 20,
         scaleX: 0.25,
