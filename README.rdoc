@@ -12,7 +12,7 @@ http://jeff-cole-projects.herokuapp.com/easel_box2d
 
   cd server
   npm install
-  node app.js  
+  node server/app.js  
   open browser to http://localhost:3000
 
 
