@@ -42,7 +42,11 @@ class window.EaselBoxWorld
     
     @objects.push(object)
     return object
-      
+   
+  removeEntity: (object) ->
+    @box2dWorld.DestroyBody(object.body)
+    @easelStage.removeChild(object.easelObj)
+     
   addImage: (imgSrc, options) ->
     obj = new Bitmap(imgSrc)
     for property, value of options

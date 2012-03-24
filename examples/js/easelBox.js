@@ -224,6 +224,11 @@
       return object;
     };
 
+    EaselBoxWorld.prototype.removeEntity = function(object) {
+      this.box2dWorld.DestroyBody(object.body);
+      return this.easelStage.removeChild(object.easelObj);
+    };
+
     EaselBoxWorld.prototype.addImage = function(imgSrc, options) {
       var obj, property, value;
       obj = new Bitmap(imgSrc);

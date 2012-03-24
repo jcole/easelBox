@@ -20,6 +20,9 @@ class window.KitchenSinkDemo
     obj.easelObj.onPress = (eventPress) =>  
       alert('I am a standard circle')
     
+    # Example for how to remove this object, if you want:
+    # @world.removeEntity(obj)
+    
     obj = @world.addEntity( 
       radiusPixels: 20, 
       imgSrc: '/img/exorcist_40x50.png', 
@@ -77,5 +80,4 @@ class window.KitchenSinkDemo
   
   tick: () ->
     @stats.update()
-    
     
