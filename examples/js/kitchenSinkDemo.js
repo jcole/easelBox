@@ -55,7 +55,7 @@
         });
       }
       obj.easelObj.onPress = function(eventPress) {
-        return alert('I am an animated bitmap');
+        return alert('I am a circle with an animated bitmap');
       };
       obj = this.world.addEntity({
         radiusPixels: 15,
@@ -89,6 +89,22 @@
       });
       obj.easelObj.onPress = function(eventPress) {
         return alert('I am a rectangle with a bitmap');
+      };
+      obj = this.world.addEntity({
+        widthPixels: 99,
+        heightPixels: 152,
+        imgSrc: "/img/scooter-sprite-99.png",
+        frames: {
+          width: 99,
+          height: 152
+        },
+        startFrame: 0,
+        xPixels: canvas.width * 1 / 4,
+        yPixels: canvas.height * 1 / 2,
+        angularVelRadians: -1
+      });
+      obj.easelObj.onPress = function(eventPress) {
+        return alert('I am a rectangle with an animated bitmap');
       };
       this.stats = new Stats();
       statsCanvas.appendChild(this.stats.domElement);

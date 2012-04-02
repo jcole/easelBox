@@ -10,7 +10,17 @@ class window.EaselBoxRectangle extends EaselBoxObject
     # init the Easel shape
     object = null
     if options and options.imgSrc
-      object = new Bitmap(options.imgSrc)
+      if options and options.frames      
+        data = {
+                  images: [options.imgSrc],
+                  frames: options.frames,
+                }     
+        bmpAnim = new BitmapAnimation(new SpriteSheet(data))
+        object = bmpAnim.clone()
+        object.gotoAndPlay(options.startFrame | 0);
+      else
+        object = new Bitmap(options.imgSrc)
+      
       object.regX = widthPixels / 2
       object.regY = heightPixels / 2
     else

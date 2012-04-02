@@ -160,14 +160,24 @@
     __extends(EaselBoxRectangle, _super);
 
     function EaselBoxRectangle(widthPixels, heightPixels, options) {
-      var box2dShape, heightMeters, object, widthMeters;
+      var bmpAnim, box2dShape, data, heightMeters, object, widthMeters;
       if (options == null) options = null;
       widthMeters = widthPixels / PIXELS_PER_METER;
       heightMeters = heightPixels / PIXELS_PER_METER;
       box2dShape = new Box2D.Collision.Shapes.b2PolygonShape.AsBox(widthMeters / 2, heightMeters / 2);
       object = null;
       if (options && options.imgSrc) {
-        object = new Bitmap(options.imgSrc);
+        if (options && options.frames) {
+          data = {
+            images: [options.imgSrc],
+            frames: options.frames
+          };
+          bmpAnim = new BitmapAnimation(new SpriteSheet(data));
+          object = bmpAnim.clone();
+          object.gotoAndPlay(options.startFrame | 0);
+        } else {
+          object = new Bitmap(options.imgSrc);
+        }
         object.regX = widthPixels / 2;
         object.regY = heightPixels / 2;
       } else {

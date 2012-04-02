@@ -42,7 +42,7 @@ class window.KitchenSinkDemo
         yPixels: 20,
         yVelPixels: 10)
     obj.easelObj.onPress = (eventPress) =>  
-      alert('I am an animated bitmap')
+      alert('I am a circle with an animated bitmap')
     
     obj = @world.addEntity( 
       radiusPixels: 15,
@@ -73,6 +73,20 @@ class window.KitchenSinkDemo
       angularVelRadians: -1)
     obj.easelObj.onPress = (eventPress) =>  
       alert('I am a rectangle with a bitmap')
+    
+    # image courtesy of: http://bittyjava.wordpress.com/2009/11/12/easy-fun-game-sprites-made-with-svg/
+    # image is 396 x 304.  So, with 4x2 blocks, each is 99x152
+    obj = @world.addEntity(
+      widthPixels: 99,
+      heightPixels: 152,
+      imgSrc: "/img/scooter-sprite-99.png", 
+      frames: {width:99, height:152}
+      startFrame: 0, 
+      xPixels: canvas.width * 1 / 4,
+      yPixels: canvas.height * 1 / 2,
+      angularVelRadians: -1)
+    obj.easelObj.onPress = (eventPress) =>  
+      alert('I am a rectangle with an animated bitmap')
      
     # optional: set up frame rate display
     @stats = new Stats()
