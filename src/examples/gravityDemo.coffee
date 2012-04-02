@@ -23,6 +23,21 @@ class window.GravityDemo
       angleRadians: 45,
       angularVelRadians: 2)    
 
+    # image courtesy of: http://bittyjava.wordpress.com/2009/11/12/easy-fun-game-sprites-made-with-svg/
+    # image is 396 x 304.  So, with 4x2 blocks, each is 99x152
+    obj = @world.addEntity(
+      widthPixels: 99,
+      heightPixels: 152,
+      density: 0.5,
+      scaleX: 0.5,
+      scaleY: 0.5,
+      imgSrc: "/img/scooter-sprite-99.png", 
+      frames: {width:99, height:152}
+      startFrame: 0, 
+      xPixels: canvas.width * 1 / 4,
+      yPixels: canvas.height * 1 / 2,
+      angularVelRadians: -1)
+
     for i in [0..4]
       for j in [0..3]
         x =  -40 + Math.floor(Math.random()*80) + canvas.width * i / 4

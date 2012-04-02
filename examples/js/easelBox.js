@@ -164,6 +164,8 @@
       if (options == null) options = null;
       widthMeters = widthPixels / PIXELS_PER_METER;
       heightMeters = heightPixels / PIXELS_PER_METER;
+      if (options && options.scaleX) widthMeters = widthMeters * options.scaleX;
+      if (options && options.scaleY) heightMeters = heightMeters * options.scaleY;
       box2dShape = new Box2D.Collision.Shapes.b2PolygonShape.AsBox(widthMeters / 2, heightMeters / 2);
       object = null;
       if (options && options.imgSrc) {
@@ -178,6 +180,8 @@
         } else {
           object = new Bitmap(options.imgSrc);
         }
+        object.scaleX = options.scaleX || 1;
+        object.scaleY = options.scaleY || 1;
         object.regX = widthPixels / 2;
         object.regY = heightPixels / 2;
       } else {

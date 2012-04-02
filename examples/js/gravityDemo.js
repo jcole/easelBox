@@ -14,7 +14,7 @@
     gravitationalConstant = 1.5;
 
     function GravityDemo(canvas, debugCanvas, statsCanvas) {
-      var i, j, x, xVel, y, yVel,
+      var i, j, obj, x, xVel, y, yVel,
         _this = this;
       this.world = new EaselBoxWorld(this, frameRate, canvas, debugCanvas, gravityX, gravityY, pixelsPerMeter);
       this.world.addImage("/img/space.jpg");
@@ -34,6 +34,22 @@
         yPixels: canvas.height * 2 / 3,
         angleRadians: 45,
         angularVelRadians: 2
+      });
+      obj = this.world.addEntity({
+        widthPixels: 99,
+        heightPixels: 152,
+        density: 0.5,
+        scaleX: 0.5,
+        scaleY: 0.5,
+        imgSrc: "/img/scooter-sprite-99.png",
+        frames: {
+          width: 99,
+          height: 152
+        },
+        startFrame: 0,
+        xPixels: canvas.width * 1 / 4,
+        yPixels: canvas.height * 1 / 2,
+        angularVelRadians: -1
       });
       for (i = 0; i <= 4; i++) {
         for (j = 0; j <= 3; j++) {

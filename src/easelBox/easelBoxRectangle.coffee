@@ -3,6 +3,12 @@ class window.EaselBoxRectangle extends EaselBoxObject
   constructor: (widthPixels, heightPixels, options=null) ->  
     widthMeters = widthPixels / PIXELS_PER_METER
     heightMeters = heightPixels / PIXELS_PER_METER
+    
+    if options and options.scaleX
+      widthMeters = widthMeters * options.scaleX
+
+    if options and options.scaleY
+      heightMeters = heightMeters * options.scaleY
       
     # init the Box2d physics entity
     box2dShape = new Box2D.Collision.Shapes.b2PolygonShape.AsBox(widthMeters / 2, heightMeters / 2)
@@ -21,6 +27,8 @@ class window.EaselBoxRectangle extends EaselBoxObject
       else
         object = new Bitmap(options.imgSrc)
       
+      object.scaleX = options.scaleX || 1
+      object.scaleY = options.scaleY || 1      
       object.regX = widthPixels / 2
       object.regY = heightPixels / 2
     else
