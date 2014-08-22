@@ -3,7 +3,7 @@
   "version": "0.0.1", 
   "private": true, 
   "dependencies": {
-    "express" : "*",
-    "coffee-script" : "*"
+    "express" : "4.*",
+    "coffee-script" : "1.7.*"
   }
 }

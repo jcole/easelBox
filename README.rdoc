@@ -12,7 +12,7 @@ http://jeff-cole-projects.herokuapp.com/easel_box2d
 
   cd server
   npm install
-  node server/app.js  
+  node app.js  
   open browser to http://localhost:3000
 
 
@@ -25,8 +25,7 @@ In addition to your own JS files, you need to require the following:
 
 == To re-build source
 
-  cake watch  
-
+  cake build  
 
 == Docs
 
